@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+
+
+
+/* globals.css */
+body {
+  font-family: var(--font-dm-sans), sans-serif;;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.animate-blink {
+  animation: blink 1s step-start infinite;
+}
+
+@layer base {
+  button, 
+  a, 
+  [role="button"], 
+  input[type="submit"], 
+  input[type="button"], 
+  input[type="reset"], 
+  .clickable {
+    @apply cursor-pointer;
+  }
+}
+
+
+
+
+
+
+
