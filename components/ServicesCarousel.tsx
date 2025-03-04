@@ -1,6 +1,6 @@
 'use client';
 // ServicesCarousel.jsx (Client Component)
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { 
   ArrowUpRight,
@@ -8,9 +8,22 @@ import {
   ChevronRight
 } from 'lucide-react';
 
-const ServicesCarousel = ({ services }) => {
+interface Service {
+  image: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  accentColor: string;
+}
+
+interface ServicesCarouselProps {
+  services: Service[];
+}
+
+const ServicesCarousel: React.FC<ServicesCarouselProps> = ({ services }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Handle client-side mounting
   useEffect(() => {
@@ -25,15 +38,25 @@ const ServicesCarousel = ({ services }) => {
     setActiveIndex((current) => (current === services.length - 1 ? 0 : current + 1));
   };
 
+  const startAutoSlide = () => {
+    if (intervalRef.current) return;
+    intervalRef.current = setInterval(() => {
+      nextSlide();
+    }, 5000);
+  };
+
+  const stopAutoSlide = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
+
   // Automatic carousel
   useEffect(() => {
     if (!mounted) return;
-    
-    const interval = setInterval(() => {
-      nextSlide();
-    }, 5000);
-    
-    return () => clearInterval(interval);
+    startAutoSlide();
+    return () => stopAutoSlide();
   }, [activeIndex, mounted]);
 
   // During SSR or before hydration, hide the client component
@@ -49,7 +72,12 @@ const ServicesCarousel = ({ services }) => {
           style={{ transform: `translateX(-${activeIndex * 100}%)` }}
         >
           {services.map((service, index) => (
-            <div key={index} className="w-full flex-shrink-0">
+            <div 
+              key={index} 
+              className="w-full flex-shrink-0"
+              onMouseEnter={stopAutoSlide}
+              onMouseLeave={startAutoSlide}
+            >
               <div className="bg-white rounded-xl border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
                 <div className={`absolute inset-0 bg-gradient-to-br ${service.accentColor} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
                 
@@ -59,7 +87,7 @@ const ServicesCarousel = ({ services }) => {
                     <div className="absolute inset-0 bg-gray-200">
                       <div className="relative w-full h-full">
                         <Image 
-                          src={`/api/placeholder/800/600`} 
+                          src={service.image} 
                           alt={service.title}
                           layout="fill"
                           objectFit="cover"
@@ -83,13 +111,6 @@ const ServicesCarousel = ({ services }) => {
                     
                     <div className="text-gray-600 whitespace-pre-line">
                       {service.description}
-                    </div>
-                    
-                    <div className="mt-4">
-                      <button className="text-purple-600 font-medium flex items-center hover:text-purple-700 transition-colors">
-                        Learn more
-                        <ArrowUpRight className="w-4 h-4 ml-1" />
-                      </button>
                     </div>
                   </div>
                 </div>
