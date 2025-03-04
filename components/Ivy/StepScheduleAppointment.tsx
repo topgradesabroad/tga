@@ -6,25 +6,33 @@ interface StepScheduleAppointmentProps {
     date: string;
     time: string;
   };
+  
   updateData: (data: Partial<{ date: string; time: string }>) => void;
   prevStep: () => void;
-  onSubmit: () => void;
+  onSubmit: (e: React.FormEvent) => Promise<void>;
+  isSubmitting: boolean;
 }
 
 const timeSlots = [
+  "09:00 AM",
   "10:00 AM",
   "11:00 AM",
   "12:00 PM",
   "1:00 PM",
   "2:00 PM",
-  "3:00 PM"
+  "3:00 PM",
+  "4:00 PM",
+  "5:00 PM",
+  "6:00 PM",
+  "7:00 PM"
 ];
 
 const StepScheduleAppointment: React.FC<StepScheduleAppointmentProps> = ({
   appointment,
   updateData,
   prevStep,
-  onSubmit
+  onSubmit,
+  isSubmitting
 }) => {
   const [showPicker, setShowPicker] = useState(false);
   const today = new Date().toISOString().split("T")[0];
@@ -59,7 +67,7 @@ const StepScheduleAppointment: React.FC<StepScheduleAppointmentProps> = ({
           </div>
         </>
       ) : (
-        <>
+        <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-4">
             <input
               type="date"
@@ -89,20 +97,27 @@ const StepScheduleAppointment: React.FC<StepScheduleAppointmentProps> = ({
             <button
               type="button"
               onClick={prevStep}
-              className="bg-gray-300 text-gray-800 px-3 py-2 rounded-lg text-xs ripple transition transform hover:scale-105"
+              className="px-4 py-2 text-rose-600 border border-rose-600 rounded-lg hover:bg-rose-50"
+              disabled={isSubmitting}
             >
-              Back
+              Previous
             </button>
             <button
-              type="button"
-              onClick={onSubmit}
-              disabled={!appointment.date || !appointment.time}
-              className="bg-blue-600 text-white px-3 py-2 rounded-lg text-xs disabled:opacity-50 ripple transition transform hover:scale-105"
+              type="submit"
+              disabled={isSubmitting}
+              className="px-6 py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition-colors duration-300 disabled:bg-rose-400 flex items-center space-x-2"
             >
-              Submit
+              {isSubmitting ? (
+                <>
+                  <span className="animate-spin">⭕</span>
+                  <span>Submitting...</span>
+                </>
+              ) : (
+                'Submit'
+              )}
             </button>
           </div>
-        </>
+        </form>
       )}
     </div>
   );

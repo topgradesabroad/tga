@@ -27,4 +27,71 @@ export type IvyFlowData = {
       time: string;
     };
   };
+
+export interface IvyEmailPayload {
+  name: string;
+  email: string;
+  mobileNumber: string;
+  universityPreferences: string;
+  currentEducation: string;
+  courseInterest: string;
+}
+
+const handleSubmit = async (e: React.FormEvent, formData: IvyFlowData, setFormData: React.Dispatch<React.SetStateAction<IvyFlowData>>) => {
+  e.preventDefault();
   
+  try {
+    // Use the existing type structure for the email submission
+    const emailPayload: IvyEmailPayload = {
+      name: formData.personalDetails.name,
+      email: formData.personalDetails.email,
+      mobileNumber: formData.personalDetails.phone,
+      universityPreferences: formData.selectedIvy.join(', '), // Convert array to string
+      currentEducation: formData.personalDetails.admissionType,
+      courseInterest: formData.personalDetails.course
+    };
+
+    const emailResponse = await fetch('/api/ivyform', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(emailPayload)
+    });
+
+    if (!emailResponse.ok) {
+      throw new Error('Failed to send email');
+    }
+
+    // Show success message
+    alert('Form submitted successfully! We will contact you soon.');
+    
+    // Reset form using the IvyFlowData type structure
+    setFormData({
+      preference: "",
+      selectedIvy: [],
+      selectedAPlus: [],
+      personalDetails: {
+        name: "",
+        email: "",
+        phone: "",
+        admissionType: "",
+        course: ""
+      },
+      otherDetails: {
+        name: "",
+        email: "",
+        phone: "",
+        countryPreference: ""
+      },
+      appointment: {
+        date: "",
+        time: ""
+      }
+    });
+
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Something went wrong. Please try again.');
+  }
+};

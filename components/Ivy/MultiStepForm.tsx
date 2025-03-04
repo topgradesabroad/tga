@@ -8,6 +8,7 @@ import StepAPlusSelection from "./StepAPlusSelection";
 import StepPersonalDetails from "./StepPersonalDetails";
 import StepOtherDetails from "./StepOtherDetails";
 import StepScheduleAppointment from "./StepScheduleAppointment";
+import ThankYouMessage from "./ThankYouMessage";
 import { IvyFlowData } from "./types"; // if you separate types
 
 const MultiStepForm = () => {
@@ -34,6 +35,8 @@ const MultiStepForm = () => {
       time: ""
     }
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showThankYou, setShowThankYou] = useState(false);
 
   // For Ivy or A+ flows: 4 steps; For Other flow: 3 steps.
   const totalSteps =
@@ -72,10 +75,69 @@ const MultiStepForm = () => {
   const nextStep = () => setCurrentStep((prev) => prev + 1);
   const prevStep = () => setCurrentStep((prev) => prev - 1);
 
-  const handleSubmit = () => {
-    console.log("Final Data Submitted: ", formData);
-    // You could trigger a confetti or Lottie animation here on success
-    alert("Form submitted!");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      // First, send email through our API route
+      const emailResponse = await fetch('/api/ivyform', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.personalDetails.name,
+          email: formData.personalDetails.email,
+          mobileNumber: formData.personalDetails.phone,
+          universityPreferences: formData.preference === 'ivy' 
+            ? formData.selectedIvy.join(', ')
+            : formData.preference === 'aplus'
+            ? formData.selectedAPlus.join(', ')
+            : formData.otherDetails.countryPreference,
+          currentEducation: formData.personalDetails.admissionType,
+          courseInterest: formData.personalDetails.course
+        })
+      });
+  
+      if (!emailResponse.ok) {
+        throw new Error('Failed to send email');
+      }
+  
+      setShowThankYou(true);
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleClose = () => {
+    setShowThankYou(false);
+    setFormData({
+      preference: "",
+      selectedIvy: [],
+      selectedAPlus: [],
+      personalDetails: {
+        name: "",
+        email: "",
+        phone: "",
+        admissionType: "",
+        course: ""
+      },
+      otherDetails: {
+        name: "",
+        email: "",
+        phone: "",
+        countryPreference: ""
+      },
+      appointment: {
+        date: "",
+        time: ""
+      }
+    });
+    setCurrentStep(1);
   };
 
   return (
@@ -126,12 +188,17 @@ const MultiStepForm = () => {
             />
           )}
           {currentStep === (formData.preference === "other" ? 3 : 4) && (
-            <StepScheduleAppointment
-              appointment={formData.appointment}
-              updateData={updateAppointment}
-              prevStep={prevStep}
-              onSubmit={handleSubmit}
-            />
+            showThankYou ? (
+              <ThankYouMessage onClose={handleClose} />
+            ) : (
+              <StepScheduleAppointment
+                appointment={formData.appointment}
+                updateData={updateAppointment}
+                prevStep={prevStep}
+                onSubmit={handleSubmit}
+                isSubmitting={isSubmitting}
+              />
+            )
           )}
         </div>
         {/* Right Column (Image Slider) */}
