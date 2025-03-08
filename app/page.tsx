@@ -4,6 +4,7 @@ import StatsSection from "@/components/StatsSection";
 import ExpertiseSection from "@/components/ExpertiseSection";
 import TestimonialSection from "@/components/TestimonialSection";
 import MultiStepForm from "@/components/Ivy/MultiStepForm";
+import StudyDestinationsPage from "@/components/StudyDestinationsPage";
 
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
     <ExpertiseSection />
     <TestimonialSection />
     <MultiStepForm />
+    <StudyDestinationsPage />
    
     
         

@@ -5,12 +5,12 @@ import { ClientSideNav } from './ClientSideNav';
 
 // Country data with flags
 const countries = [
-  { name: 'USA', flag: '/flags/usa.svg', href: '/countries/usa' },
-  { name: 'UK', flag: '/flags/uk.svg', href: '/countries/uk' },
-  { name: 'Canada', flag: '/flags/canada.svg', href: '/countries/canada' },
-  { name: 'Australia', flag: '/flags/australia.svg', href: '/countries/australia' },
-  { name: 'New Zealand', flag: '/flags/new-zealand.svg', href: '/countries/new-zealand' },
-  { name: 'Germany', flag: '/flags/germany.svg', href: '/countries/germany' },
+  { name: 'USA', flag: '/Flags/us.png', href: '/countries/usa' },
+  { name: 'UK', flag: '/Flags/uk.png', href: '/countries/uk' },
+  { name: 'Canada', flag: '/Flags/ca.png', href: '/countries/canada' },
+  { name: 'Australia', flag: '/Flags/au.png', href: '/countries/australia' },
+  { name: 'New Zealand', flag: '/Flags/nz.png', href: '/countries/new-zealand' },
+  { name: 'Germany', flag: '/Flags/ge.png', href: '/countries/germany' },
 ];
 
 // Main navigation items

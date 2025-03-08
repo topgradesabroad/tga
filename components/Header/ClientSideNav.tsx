@@ -25,11 +25,12 @@ interface ClientSideNavProps {
 }
 
 export function ClientSideNav({ navItems, countries }: ClientSideNavProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
-  const [showForm, setShowForm] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const pathname = usePathname();
   
+  const [showForm, setShowForm] = useState(false);
+
   return (
     <>
       {/* Desktop Navigation */}
@@ -37,50 +38,44 @@ export function ClientSideNav({ navItems, countries }: ClientSideNavProps) {
         {navItems.map((item) => (
           <div key={item.name} className="relative">
             {item.hasDropdown ? (
-              <>
+              <div className="relative group">
                 <button
                   className={`inline-flex items-center px-1 pt-1 text-md font-medium ${
                     pathname?.startsWith(item.href)
                       ? 'text-black border-b-2'
                       : 'text-black hover:text-indigo-600 border-b-2 border-transparent hover:border-indigo-300'
                   }`}
-                  onMouseEnter={() => setShowCountryDropdown(true)}
-                  onMouseLeave={() => setTimeout(() => setShowCountryDropdown(false), 300)}
-                  onClick={() => setShowCountryDropdown(!showCountryDropdown)}
-                  aria-expanded={showCountryDropdown}
+                  aria-expanded="false"
                 >
                   {item.name}
-                  <svg className="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <svg className="ml-2 h-4 w-4 transition-transform group-hover:rotate-180" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>
                 </button>
                 
                 {/* Country Dropdown */}
-                {showCountryDropdown && (
-                  <div
-                    className="absolute left-0 mt-2 w-60 bg-white rounded-md shadow-lg py-1 z-50"
-                    onMouseEnter={() => setShowCountryDropdown(true)}
-                    onMouseLeave={() => setTimeout(() => setShowCountryDropdown(false), 300)}
-                  >
-                    {countries.map((country) => (
-                      <Link key={country.name} href={country.href}>
-                        <div className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 cursor-pointer">
-                          <div className="w-6 h-4 mr-3 relative flex-shrink-0">
-                            <Image
-                              src={country.flag}
-                              alt={`${country.name} flag`}
-                              fill
-                              sizes="26px"
-                              style={{ objectFit: 'cover' }}
-                            />
-                          </div>
-                          <span>{country.name}</span>
+                <div
+                  className="absolute left-0 top-full w-60 bg-white rounded-md shadow-lg py-1 z-50 opacity-0 invisible transform -translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200"
+                >
+                  {countries.map((country) => (
+                    <Link key={country.name} href={country.href} className="block">
+                      <div className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 cursor-pointer">
+                        <div className="w-6 h-4 mr-3 relative flex-shrink-0">
+                          <Image
+                            src={country.flag}
+                            alt={`${country.name} flag`}
+                            fill
+                            sizes="24px"
+                            style={{ objectFit: 'cover' }}
+                            priority
+                          />
                         </div>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </>
+                        <span>{country.name}</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             ) : (
               <Link href={item.href} className={`inline-flex items-center px-1 pt-1 border-b-2 text-md font-medium ${
                 pathname?.startsWith(item.href)
@@ -100,11 +95,11 @@ export function ClientSideNav({ navItems, countries }: ClientSideNavProps) {
           type="button"
           className="inline-flex items-center justify-center p-2 rounded-md text-indigo-600 hover:text-white hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
           aria-controls="mobile-menu"
-          aria-expanded={isOpen}
-          onClick={() => setIsOpen(!isOpen)}
+          aria-expanded={isMobileMenuOpen}
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           <span className="sr-only">Open main menu</span>
-          {!isOpen ? (
+          {!isMobileMenuOpen ? (
             <svg className="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -127,7 +122,7 @@ export function ClientSideNav({ navItems, countries }: ClientSideNavProps) {
       </div>
       
       {/* Mobile menu */}
-      {isOpen && (
+      {isMobileMenuOpen && (
         <div className="md:hidden absolute top-20 left-0 right-0 z-40" id="mobile-menu">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white shadow-lg">
             {navItems.map((item) => (
@@ -140,15 +135,22 @@ export function ClientSideNav({ navItems, countries }: ClientSideNavProps) {
                           ? 'bg-indigo-50 text-indigo-700'
                           : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-700'
                       }`}
-                      onClick={() => setShowCountryDropdown(!showCountryDropdown)}
+                      onClick={() => setOpenDropdown(openDropdown === item.name ? null : item.name)}
                     >
                       {item.name}
-                      <svg className={`ml-2 h-5 w-5 transition-transform duration-200 ${showCountryDropdown ? 'transform rotate-180' : ''}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <svg 
+                        className={`ml-2 h-5 w-5 transition-transform duration-200 ${
+                          openDropdown === item.name ? 'rotate-180' : ''
+                        }`} 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        viewBox="0 0 20 20" 
+                        fill="currentColor"
+                      >
                         <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                       </svg>
                     </button>
                     
-                    {showCountryDropdown && (
+                    {openDropdown === item.name && (
                       <div className="mt-2 space-y-1 pl-4">
                         {countries.map((country) => (
                           <Link key={country.name} href={country.href}>
@@ -204,13 +206,3 @@ export function ClientSideNav({ navItems, countries }: ClientSideNavProps) {
   );
 }
 
-// Make sure EnquiryForm component is exported in its file
-// components/layout/EnquiryForm.tsx
-/*
-export function EnquiryForm({ onClose }: { onClose: () => void }) {
-  // Your form implementation
-  return (
-    // Form content
-  );
-}
-*/

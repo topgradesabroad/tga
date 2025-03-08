@@ -144,9 +144,13 @@ const MultiStepForm = () => {
     <div className="max-w-5xl mx-auto">
       <Headline />
       {/* Glassmorphism container with frosted glass effect */}
-      <div className="mb-30 flex flex-col md:flex-row bg-white/60 backdrop-blur-md shadow-xl rounded-lg overflow-hidden h-[400px]">
-        {/* Left Column (Content) with fade-in animation */}
-        <div className="bg-rose-50 bg-opacity-50 md:w-1/2 w-full p-4 overflow-y-auto flex flex-col justify-center fade-in">
+      <div className="mb-30 flex flex-col md:flex-row bg-white/60 backdrop-blur-md rounded-lg overflow-hidden">
+        {/* Image Slider - Moved to top for mobile */}
+        <div className="md:w-1/2 w-full md:order-2">
+          <ImageSlider />
+        </div>
+        {/* Content Column */}
+        <div className="bg-gradient-to-br from-orange-100 via-rose-100 to-purple-100 md:w-1/2 w-full p-4 md:h-[400px] min-h-[400px] flex flex-col justify-center fade-in md:order-1">
           
           {currentStep === 1 && (
             <StepChoosePreference
@@ -200,10 +204,6 @@ const MultiStepForm = () => {
               />
             )
           )}
-        </div>
-        {/* Right Column (Image Slider) */}
-        <div className="md:w-1/2 w-full">
-          <ImageSlider />
         </div>
       </div>
     </div>

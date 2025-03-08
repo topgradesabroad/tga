@@ -63,7 +63,7 @@ const StepPersonalDetails: React.FC<StepPersonalDetailsProps> = ({
         <button 
           type="button" 
           onClick={prevStep} 
-          className="bg-black text-white px-8 py-1 rounded-lg text-sm ripple transition transform hover:scale-105"
+          className="text-rose-600 border border-rose-600 px-8 py-2 rounded-lg text-md ripple transition transform hover:scale-105"
         >
           Back
         </button>
@@ -77,7 +77,7 @@ const StepPersonalDetails: React.FC<StepPersonalDetailsProps> = ({
             !details.admissionType || 
             !details.course
           }
-          className="bg-blue-600 text-white px-8 py-3 rounded-lg text-sm disabled:opacity-50 ripple transition transform hover:scale-105"
+          className="bg-rose-600 text-white px-8 py-2 rounded-lg text-md disabled:opacity-50 ripple transition transform hover:scale-105"
         >
           Next
         </button>

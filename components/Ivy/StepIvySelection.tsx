@@ -46,7 +46,7 @@ const StepIvySelection: React.FC<StepIvySelectionProps> = ({
         <button
           type="button"
           onClick={prevStep}
-          className="mt-4 bg-black text-white px-6 py-3 rounded-lg text-sm ripple transition transform hover:scale-105"
+          className="mt-4 text-rose-600 border border-rose-600 px-8 py-2 rounded-lg text-md ripple transition transform hover:scale-105"
         >
           Back
         </button>
@@ -54,7 +54,7 @@ const StepIvySelection: React.FC<StepIvySelectionProps> = ({
           type="button"
           onClick={nextStep}
           disabled={selectedIvy.length === 0}
-          className="mt-4 bg-blue-600 text-white px-6 py-3 rounded-lg text-sm disabled:opacity-50 ripple transition transform hover:scale-105"
+          className="mt-4 bg-rose-600 text-white px-8 py-2 rounded-lg text-md disabled:opacity-50 ripple transition transform hover:scale-105"
         >
           Next
         </button>

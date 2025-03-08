@@ -25,8 +25,8 @@ const StepChoosePreference: React.FC<StepChoosePreferenceProps> = ({
           onClick={() => handleSelect("ivy")}
           className={`px-4 py-2 rounded-lg ripple ${
             preference === "ivy"
-              ? "bg-blue-600 text-white"
-              : "bg-purple-300 text-gray-900"
+              ? "bg-purple-800 text-white"
+              : "bg-purple-600 text-white"
           }`}
         >
           Ivy League
@@ -36,8 +36,8 @@ const StepChoosePreference: React.FC<StepChoosePreferenceProps> = ({
           onClick={() => handleSelect("aplus")}
           className={`px-4 py-2 rounded-lg ripple ${
             preference === "aplus"
-              ? "bg-blue-600 text-white"
-              : "bg-purple-300 text-gray-900"
+              ? "bg-purple-800 text-white"
+              : "bg-purple-600 text-white"
           }`}
         >
           A+ Universities
@@ -47,8 +47,8 @@ const StepChoosePreference: React.FC<StepChoosePreferenceProps> = ({
           onClick={() => handleSelect("other")}
           className={`px-4 py-2 rounded-lg ripple ${
             preference === "other"
-              ? "bg-blue-600 text-white"
-              : "bg-purple-300 text-gray-900"
+              ? "bg-purple-800 text-white"
+              : "bg-purple-600 text-white"
           }`}
         >
           Other
@@ -58,7 +58,7 @@ const StepChoosePreference: React.FC<StepChoosePreferenceProps> = ({
         type="button"
         onClick={nextStep}
         disabled={!preference}
-        className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg disabled:opacity-50 ripple"
+        className="mt-4 bg-rose-600 text-white px-8 py-2 rounded-lg disabled:opacity-50 ripple"
       >
         Next
       </button>

@@ -7,13 +7,16 @@ import {
   ChevronLeft, 
   ChevronRight
 } from 'lucide-react';
+import ServiceButton from './ServiceButton';
 
 interface Service {
   image: string;
   title: string;
   description: string;
+  descriptionLong: string;
   icon: React.ReactNode;
   accentColor: string;
+  calendlyUrl: string; // Add this new property
 }
 
 interface ServicesCarouselProps {
@@ -109,9 +112,19 @@ const ServicesCarousel: React.FC<ServicesCarouselProps> = ({ services }) => {
                       </h3>
                     </div>
                     
-                    <div className="text-gray-600 whitespace-pre-line">
-                      {service.description}
+                    <div className="mb-6 text-gray-600 whitespace-pre-line">
+                      <div className="md:hidden">
+                        {service.description}
+                      </div>
+                      <div className="hidden md:block">
+                        {service.descriptionLong}
+                      </div>
                     </div>
+                    
+                    <ServiceButton 
+                      serviceTitle={service.title}
+                      calendlyUrl={service.calendlyUrl}
+                    />
                   </div>
                 </div>
               </div>

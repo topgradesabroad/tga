@@ -52,7 +52,7 @@ const StepScheduleAppointment: React.FC<StepScheduleAppointmentProps> = ({
           <button
             type="button"
             onClick={() => setShowPicker(true)}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg ripple transition transform hover:scale-105"
+            className="bg-purple-600 text-white px-4 py-2 rounded-lg ripple transition transform hover:scale-105"
           >
             Schedule Your Free Consultation
           </button>
@@ -60,7 +60,7 @@ const StepScheduleAppointment: React.FC<StepScheduleAppointmentProps> = ({
             <button
               type="button"
               onClick={prevStep}
-              className="bg-gray-300 text-gray-800 px-3 py-2 rounded-lg text-xs ripple transition transform hover:scale-105"
+              className="text-rose-600 border border-rose-600 px-8 py-2 rounded-lg text-md ripple transition transform hover:scale-105"
             >
               Back
             </button>
@@ -74,7 +74,7 @@ const StepScheduleAppointment: React.FC<StepScheduleAppointmentProps> = ({
               min={today}
               value={appointment.date}
               onChange={handleDateChange}
-              className="px-4 py-3 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none mx-auto"
+              className="px-4 py-3 rounded-lg border focus:ring-2 focus:ring-blue-500 focus:outline-none mx-auto"
             />
             <div className="flex flex-wrap justify-center gap-4">
               {timeSlots.map((slot) => (
@@ -82,7 +82,7 @@ const StepScheduleAppointment: React.FC<StepScheduleAppointmentProps> = ({
                   key={slot}
                   type="button"
                   onClick={() => handleTimeSelect(slot)}
-                  className={`px-3 py-1 rounded-lg border text-xs ripple transition transform hover:scale-105 ${
+                  className={`px-4 py-2 rounded-lg border text-sm ripple transition transform hover:scale-105 ${
                     appointment.time === slot
                       ? "bg-blue-600 text-white border-blue-600 shadow-sm"
                       : "bg-gray-100 text-gray-800 hover:bg-gray-200"
@@ -97,7 +97,7 @@ const StepScheduleAppointment: React.FC<StepScheduleAppointmentProps> = ({
             <button
               type="button"
               onClick={prevStep}
-              className="px-4 py-2 text-rose-600 border border-rose-600 rounded-lg hover:bg-rose-50"
+              className="px-6 py-2 text-rose-600 border border-rose-600 rounded-lg hover:bg-rose-50"
               disabled={isSubmitting}
             >
               Previous

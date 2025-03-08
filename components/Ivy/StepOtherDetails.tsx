@@ -63,7 +63,7 @@ const StepOtherDetails: React.FC<StepOtherDetailsProps> = ({ details, updateData
         <button 
           type="button" 
           onClick={prevStep} 
-          className="bg-gray-300 text-gray-800 px-6 py-3 rounded-lg"
+          className="text-rose-600 border border-rose-600 px-6 py-3 rounded-lg"
         >
           Back
         </button>
@@ -71,7 +71,7 @@ const StepOtherDetails: React.FC<StepOtherDetailsProps> = ({ details, updateData
           type="button"
           onClick={nextStep}
           disabled={!details.name || !details.email || !details.phone || !details.countryPreference}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg disabled:opacity-50"
+          className="bg-rose-600 text-white px-6 py-3 rounded-lg disabled:opacity-50"
         >
           Next
         </button>

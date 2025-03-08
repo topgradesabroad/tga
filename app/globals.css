@@ -59,6 +59,24 @@ body {
   animation: fadeIn 0.5s ease-out;
 }
 
+@import 'react-day-picker/dist/style.css';
+
+.rdp {
+  --rdp-cell-size: 40px;
+  --rdp-accent-color: #f59e0b;
+  --rdp-background-color: #fff;
+  margin: 0;
+}
+
+.rdp-day_selected:not([disabled]) {
+  border-radius: 0.375rem !important;
+  background-color: #f59e0b !important;
+}
+
+.rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+  background-color: rgba(249, 250, 251, 0.7) !important;
+  border-radius: 0.375rem !important;
+}
 
 
 

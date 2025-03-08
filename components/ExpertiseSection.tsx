@@ -10,100 +10,102 @@ import ServicesCarousel from './ServicesCarousel';
 export const services = [
   {
     title: "Counselling",
-    description: ` Our experienced counselors will help you choose the right course and university, ensuring you make informed decisions. We provide continuous support from the initial consultation to your final acceptance. 
+    description: "Expert guidance for course selection and university admissions, with personalized support throughout your journey.",
+    descriptionLong: `Our experienced counselors will help you choose the right course and university, ensuring you make informed decisions. We provide continuous support from the initial consultation to your final acceptance. 
 
-Our team is dedicated to understanding your aspirations and helping you achieve your academic goals. We offer one-on-one sessions, workshops, and resources to help you navigate the complexities of studying abroad. 
-
-Whether you need help with course selection, application strategies, or career advice, our counselors are here to support you every step of the way.`,
+Our team is dedicated to understanding your aspirations and helping you achieve your academic goals. We offer one-on-one sessions, workshops, and resources to help you navigate the complexities of studying abroad.`,
     icon: <Users className="w-6 h-6 text-gray-700" />,
     accentColor: "from-blue-500/20 to-violet-500/20",
-    image: "/ExpertiseSection/counselling.webp"
+    image: "/ExpertiseSection/counselling.webp",
+    calendlyUrl: "https://calendly.com/apply-topgradesabroad"
   },
   {
     title: "Test Prep",
-    description: ` Our test prep courses are designed to help you achieve the highest scores. We offer interactive classes, mock tests, and one-on-one tutoring to ensure you are fully prepared for your exams. 
+    description: "Comprehensive test preparation with expert instructors, practice tests, and proven strategies.",
+    descriptionLong: `Our test prep courses are designed to help you achieve the highest scores. We offer interactive classes, mock tests, and one-on-one tutoring to ensure you are fully prepared for your exams. 
 
-Our experienced instructors provide tips and strategies to tackle each section of the test. We also offer flexible schedules and online resources to fit your busy lifestyle. 
-
-With our support, you can approach your exams with confidence and achieve the scores you need to succeed.`,
+Our experienced instructors provide tips and strategies to tackle each section of the test. We also offer flexible schedules and online resources to fit your busy lifestyle.`,
     icon: <BookOpen className="w-6 h-6 text-gray-700" />,
     accentColor: "from-purple-500/20 to-pink-500/20",
-    image: "/ExpertiseSection/test.webp"
+    image: "/ExpertiseSection/test.webp",
+    calendlyUrl: "https://calendly.com/apply-topgradesabroad"
   },
   {
     title: "Admissions",
-    description: ` We help you craft compelling personal statements, gather strong recommendation letters, and prepare for interviews. Our goal is to make your application stand out. 
+    description: "Professional assistance with applications, personal statements, and interview preparation.",
+    descriptionLong: `We help you craft compelling personal statements, gather strong recommendation letters, and prepare for interviews. Our goal is to make your application stand out. 
 
-We provide insights into what top universities are looking for and help you highlight your strengths. Our team also offers mock interviews and feedback sessions to ensure you are well-prepared. 
-
-From initial research to final submission, we are here to support you in achieving your academic dreams.`,
+We provide insights into what top universities are looking for and help you highlight your strengths. Our team also offers mock interviews and feedback sessions to ensure you are well-prepared.`,
     icon: <GraduationCap className="w-6 h-6 text-gray-700" />,
     accentColor: "from-pink-500/20 to-rose-500/20",
-    image: "/ExpertiseSection/admission.webp"
+    image: "/ExpertiseSection/admission.webp",
+    calendlyUrl: "https://calendly.com/apply-topgradesabroad"
   },
   {
     title: "Education Loan",
-    description: ` We guide you through the loan application process, helping you understand the terms and conditions. Our aim is to make education affordable and accessible. 
+    description: "Simplified loan application process with competitive rates and flexible repayment options.",
+    descriptionLong: `We guide you through the loan application process, helping you understand the terms and conditions. Our aim is to make education affordable and accessible. 
 
-We work with reputable financial institutions to offer you the best loan options. Our team provides personalized financial counseling to help you plan your budget and manage your expenses. 
-
-We also offer resources and workshops on financial literacy to ensure you make informed decisions about your education funding.`,
+We work with reputable financial institutions to offer you the best loan options. Our team provides personalized financial counseling to help you plan your budget and manage your expenses.`,
     icon: <Landmark className="w-6 h-6 text-gray-700" />,
     accentColor: "from-amber-500/20 to-orange-500/20",
-    image: "/ExpertiseSection/loan.webp"
+    image: "/ExpertiseSection/loan.webp",
+    calendlyUrl: "https://calendly.com/apply-topgradesabroad"
   },
   {
     title: "Visa Help",
-    description: ` We provide detailed instructions and support to help you gather the necessary documents. Our experts stay updated on visa regulations to ensure a smooth application process. 
+    description: "Expert guidance through visa application process with updated regulation support.",
+    descriptionLong: `We provide detailed instructions and support to help you gather the necessary documents. Our experts stay updated on visa regulations to ensure a smooth application process. 
 
-We offer personalized consultations to address your specific visa needs and concerns. Our team also provides resources and workshops on visa requirements and procedures. 
-
-With our support, you can navigate the visa application process with ease and confidence.`,
+We offer personalized consultations to address your specific visa needs and concerns. Our team also provides resources and workshops on visa requirements and procedures.`,
     icon: <Stamp className="w-6 h-6 text-gray-700" />,
     accentColor: "from-emerald-500/20 to-teal-500/20",
-    image: "/ExpertiseSection/visa.webp"
+    image: "/ExpertiseSection/visa.webp",
+    calendlyUrl: "https://calendly.com/apply-topgradesabroad"
   },
   {
     title: "Housing",
-    description: ` We help you find safe and comfortable housing that fits your budget. Our team provides information on local amenities and transportation to make your stay enjoyable. 
+    description: "Safe and comfortable accommodation options to suit your budget and preferences.",
+    descriptionLong: `We help you find safe and comfortable housing that fits your budget. Our team provides information on local amenities and transportation to make your stay enjoyable. 
 
-We offer a range of housing options, from dormitories to private apartments, to suit your preferences. Our team also provides tips on adjusting to your new environment and making the most of your living experience. 
-
-With our support, you can find a home away from home.`,
+We offer a range of housing options, from dormitories to private apartments, to suit your preferences. Our team also provides tips on adjusting to your new environment.`,
     icon: <Home className="w-6 h-6 text-gray-700" />,
     accentColor: "from-cyan-500/20 to-sky-500/20",
-    image: "/ExpertiseSection/room.webp"
+    image: "/ExpertiseSection/room.webp",
+    calendlyUrl: "https://calendly.com/apply-topgradesabroad"
   },
   {
     title: "Travel",
-    description: ` We help you find the best flight deals and prepare for your trip. Our services include travel insurance, packing tips, and advice on navigating airports and customs. 
+    description: "Comprehensive travel planning with best flight deals and pre-departure support.",
+    descriptionLong: `We help you find the best flight deals and prepare for your trip. Our services include travel insurance, packing tips, and advice on navigating airports and customs. 
 
-We also offer resources on cultural adaptation and safety tips for international travel. Our team is dedicated to ensuring you have a stress-free travel experience. 
-
-From booking your flight to arriving at your destination, we are here to support you every step of the way.`,
+We also offer resources on cultural adaptation and safety tips for international travel. Our team is dedicated to ensuring you have a stress-free travel experience.`,
     icon: <Plane className="w-6 h-6 text-gray-700" />,
     accentColor: "from-indigo-500/20 to-blue-500/20",
-    image: "/ExpertiseSection/travel.webp"
+    image: "/ExpertiseSection/travel.webp",
+    calendlyUrl: "https://calendly.com/apply-topgradesabroad"
   },
   {
     title: "Insurance",
-    description: ` We offer insurance plans that cover medical emergencies, trip cancellations, and lost luggage. Our team helps you choose the right plan to ensure peace of mind while you study abroad. 
+    description: "Complete coverage for medical emergencies and travel-related incidents.",
+    descriptionLong: `We offer insurance plans that cover medical emergencies, trip cancellations, and lost luggage. Our team helps you choose the right plan to ensure peace of mind while you study abroad. 
 
-We also provide resources on understanding insurance policies and making claims. With our support, you can travel with confidence knowing you are protected against unforeseen events.`,
+We also provide resources on understanding insurance policies and making claims. With our support, you can travel with confidence knowing you are protected.`,
     icon: <HeartPulse className="w-6 h-6 text-gray-700" />,
     accentColor: "from-rose-500/20 to-pink-500/20",
-    image: "/ExpertiseSection/insurance.webp"
+    image: "/ExpertiseSection/insurance.webp",
+    calendlyUrl: "https://calendly.com/apply-topgradesabroad"
   },
   {
     title: "Jobs",
-    description: ` We help you build a strong resume, prepare for interviews, and connect with potential employers. Our goal is to help you secure a job that aligns with your career aspirations. 
+    description: "Career guidance and job placement support for international opportunities.",
+    descriptionLong: `We help you build a strong resume, prepare for interviews, and connect with potential employers. Our goal is to help you secure a job that aligns with your career aspirations. 
 
-We offer workshops on job search strategies, networking, and professional development. Our team also provides resources on work permits and visa requirements for international employment. 
-
-With our support, you can achieve your career goals and succeed in the global job market.`,
+We offer workshops on job search strategies, networking, and professional development. Our team also provides resources on work permits and visa requirements.`,
     icon: <Briefcase className="w-6 h-6 text-gray-700" />,
     accentColor: "from-violet-500/20 to-purple-500/20",
-    image: "/ExpertiseSection/job.webp"
+    image: "/ExpertiseSection/job.webp",
+    calendlyUrl: "https://calendly.com/apply-topgradesabroad"
   }
 ];
 
@@ -119,7 +121,6 @@ const ExpertiseSection = () => {
       </Head>
       
       <section className="mt-10 pt-10 pb-16 relative overflow-hidden">
-        {/* Enhanced Background */}
         <div className="absolute inset-0 bg-gradient-to-b from-white to-blue-50" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -136,61 +137,10 @@ const ExpertiseSection = () => {
             </div>
           </div>
 
-          {/* Static fallback for SSR - This will be displayed during SSR */}
-          <div className="block md:hidden">
-            <StaticServiceCard service={services[0]} />
-          </div>
-
-          {/* Client component carousel */}
           <ServicesCarousel services={services} />
         </div>
       </section>
     </>
-  );
-};
-
-// This static card is used as a fallback during SSR
-interface Service {
-  title: string;
-  description: string;
-  icon: JSX.Element;
-  accentColor: string;
-  image: string;
-}
-
-const StaticServiceCard = ({ service }: { service: Service }) => {
-  return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-      <div className="relative flex flex-col">
-        {/* Image Section (Static Placeholder) */}
-        <div className="relative h-64 overflow-hidden bg-gray-200">
-          {/* Showing a colored div instead of Image component for SSR */}
-          <div className="absolute inset-0 bg-blue-100"></div>
-        </div>
-        
-        {/* Content Section */}
-        <div className="p-6 relative">
-          <div className="flex items-center mb-4">
-            <div className="p-2 rounded-lg bg-white shadow-sm mr-3">
-              {service.icon}
-            </div>
-            <h3 className="text-xl font-semibold text-gray-900">
-              {service.title}
-            </h3>
-          </div>
-          
-          <div className="text-gray-600 whitespace-pre-line">
-            {service.description}
-          </div>
-          
-          <div className="mt-4">
-            <button className="text-purple-600 font-medium flex items-center">
-              Learn more
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 };
 

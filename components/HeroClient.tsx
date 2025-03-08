@@ -112,7 +112,7 @@ export default function HeroClient() {
       </div>
 
       {/* Fixed headline area */}
-      <div className="relative h-64 w-full overflow-hidden mb-4 bg-white flex items-start pt-8">
+      <div className="relative h-40 w-full md:h-64 overflow-hidden mb-4 bg-white flex items-start pt-8">
         {(phase === "typewriter" || phase === "visible" || phase === "slideOut") && (
           <h1
             ref={headlineRef}
