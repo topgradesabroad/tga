@@ -113,6 +113,12 @@ const WorldMap: React.FC = () => {
     setSelectedDestination(prev => prev?.name === destination.name ? null : destination);
   };
 
+  const getCountryUrlPath = (countryName: string): string => {
+    if (countryName === 'United States') return 'usa';
+    if (countryName === 'United Kingdom') return 'uk';
+    return countryName.toLowerCase().replace(/\s+/g, '-');
+  };
+
   return (
     <div className="relative w-full h-[500px] map-container"> {/* Increased height for better visibility */}
       <Suspense fallback={<LoadingFallback />}>
@@ -216,8 +222,7 @@ const WorldMap: React.FC = () => {
             </p>
             <div className="mt-4 text-center">
               <a
-                href={`/countries/${selectedDestination.name.toLowerCase() === 'united states' ? 'usa' : 
-                  selectedDestination.name.toLowerCase().replace(/\s+/g, '-')}`}
+                href={`/countries/${getCountryUrlPath(selectedDestination.name)}`}
                 className="inline-block bg-white rounded-sm px-6 py-2 text-purple-600 hover:text-purple-800 font-medium cursor-pointer"
                 style={{ pointerEvents: 'auto' }}
               >

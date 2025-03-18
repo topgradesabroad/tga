@@ -2,8 +2,8 @@ import React from 'react';
 
 export default function USAEntryRequirements() {
   return (
-    <section id="requirements" className="bg-gray-50">
-      <div className="container mx-auto">
+    <section id="requirements" className="scroll-mt-32 py-20">
+      <div className="max-w-7xl mx-auto">
         <h2 className="text-3xl font-bold mb-10 text-gray-900 border-l-4 pl-4 border-purple-600">
           Entry Requirements for US Programs
         </h2>
@@ -245,13 +245,9 @@ export default function USAEntryRequirements() {
           
           <div className="grid md:grid-cols-3 gap-6">
             {/* Medical School */}
-            <div className="bg-white p-6 rounded-xl shadow-sm">
+            <div className="bg-white p-3 rounded-xl shadow-sm">
               <div className="flex items-center mb-4">
-                <span className="h-10 w-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mr-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
-                  </svg>
-                </span>
+               
                 <h4 className="text-xl font-medium text-gray-900">Medical School (MD)</h4>
               </div>
               
@@ -262,11 +258,11 @@ export default function USAEntryRequirements() {
                 </div>
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <p className="font-medium text-purple-600">Standardized Tests</p>
-                  <p className="text-sm mt-1">MCAT score (average for accepted students: 511-512)</p>
+                  <p className="text-sm mt-1">MCAT score (average for accepted students: 511-512) Also NEET for Indians</p>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <p className="font-medium text-purple-600">Experience</p>
-                  <p className="text-sm mt-1">Clinical experience/shadowing and research experience (preferred)</p>
+                  <p className="text-sm mt-1">Clinical experience / shadowing and research experience (preferred)</p>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <p className="font-medium text-purple-600">Application</p>
@@ -280,13 +276,9 @@ export default function USAEntryRequirements() {
             </div>
             
             {/* Law School */}
-            <div className="bg-white p-6 rounded-xl shadow-sm">
+            <div className="bg-white p-3 rounded-xl shadow-sm">
               <div className="flex items-center mb-4">
-                <span className="h-10 w-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mr-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-                  </svg>
-                </span>
+                
                 <h4 className="text-xl font-medium text-gray-900">Law School (JD)</h4>
               </div>
               
@@ -301,7 +293,7 @@ export default function USAEntryRequirements() {
                 </div>
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <p className="font-medium text-purple-600">Materials</p>
-                  <p className="text-sm mt-1">Personal statement, resume, letters of recommendation</p>
+                  <p className="text-sm mt-1">Personal statement, resume, letters of recommendation, Transcripts</p>
                 </div>
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <p className="font-medium text-purple-600">Application</p>
@@ -315,14 +307,10 @@ export default function USAEntryRequirements() {
             </div>
             
             {/* MBA Programs */}
-            <div className="bg-white p-6 rounded-xl shadow-sm">
+            <div className="bg-white p-3 rounded-xl shadow-sm">
               <div className="flex items-center mb-4">
-                <span className="h-10 w-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mr-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </span>
-                <h4 className="text-xl font-medium text-gray-900">MBA Programs</h4>
+                
+                <h4 className="text-xl font-medium text-gray-900">MBA Programs (Ivy)</h4>
               </div>
               
               <div className="space-y-4">
@@ -357,7 +345,7 @@ export default function USAEntryRequirements() {
             Specialized Programs
           </h3>
           
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-8 bg-white rounded-lg p-3 shadow-sm">
             <div className="flex">
               <div className="flex-shrink-0">
               </div>

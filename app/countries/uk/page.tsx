@@ -11,9 +11,10 @@ import StudentLife from './components/StudentLife'
 import FAQ from './components/FAQ'
 
 
+
 export const metadata: Metadata = {
-  title: 'Study in USA - Complete Guide for International Students',
-  description: 'Comprehensive guide about studying in the United States. Learn about top universities, costs, requirements, student life and more.',
+  title: 'Study in UK - Complete Guide for International Students',
+  description: 'Comprehensive guide about studying in the United Kingdom. Learn about top universities, costs, requirements, student life and more.',
 }
 
 export default function USAPage() {
@@ -29,12 +30,12 @@ export default function USAPage() {
             {/* Main Content Column */}
             <div className="lg:col-span-2 space-y-20">
               <Overview/>
-              <Universities/>
-              <Costs/>
-              <Requirements/>
-              <Process/>
-              <StudentLife/>
-              <FAQ/>
+                <Universities/>
+                <Costs/>
+                <Requirements/>
+                <Process/>
+                <StudentLife/>
+                <FAQ/>
             </div>
 
             {/* Sticky Sidebar */}

@@ -261,23 +261,9 @@ export default function Universities() {
         "Apply economic theories to policy and business strategies"
       ],
       tuitionFees:
-        "Public: $10,560 (in‑state) / $27,020 (out‑of‑state); Private: $52,000"
+        "Public: $12,500 (in‑state) / $25,000 (out‑of‑state); Private: $42,000"
     },
-    {
-      name: "BSc in Supply Chain Management",
-      specializations: ["Logistics", "Procurement", "Operations Management"],
-      prerequisites:
-        "High School Diploma with basic proficiency in mathematics",
-      description:
-        "Provides an in‑depth understanding of global supply chain dynamics, logistics, and operational efficiency.",
-      outcomes: [
-        "Master supply chain strategy and logistics",
-        "Develop effective procurement and operations skills",
-        "Analyze and optimize supply chain processes"
-      ],
-      tuitionFees:
-        "Public: $10,560 (in‑state) / $27,020 (out‑of‑state); Private: $52,000"
-    },
+    
     {
       name: "BA in Film Production",
       specializations: ["Directing", "Cinematography", "Screenwriting"],
@@ -291,23 +277,9 @@ export default function Universities() {
         "Master technical and artistic aspects of filmmaking"
       ],
       tuitionFees:
-        "Public: $10,560 (in‑state) / $27,020 (out‑of‑state); Private: $52,000"
+        "Public: $15,000 (in‑state) / $30,000 (out‑of‑state); Private: $60,000"
     },
-    {
-      name: "BMus in Music Performance",
-      specializations: ["Classical", "Jazz", "Contemporary"],
-      prerequisites:
-        "High School Diploma and proficiency in an instrument or vocal performance",
-      description:
-        "Combines performance training, music theory, and composition to prepare students for a career in music.",
-      outcomes: [
-        "Enhance technical performance skills",
-        "Develop creative musical expression",
-        "Understand advanced music theory and composition"
-      ],
-      tuitionFees:
-        "Public: $10,560 (in‑state) / $27,020 (out‑of‑state); Private: $52,000"
-    },
+    
     {
       name: "BBA in Marketing",
       specializations: ["Digital Marketing", "Consumer Behavior", "Brand Management"],
@@ -321,38 +293,10 @@ export default function Universities() {
         "Develop and manage compelling brands"
       ],
       tuitionFees:
-        "Public: $10,560 (in‑state) / $27,020 (out‑of‑state); Private: $52,000"
+        "Public: $13,000 (in‑state) / $24,000 (out‑of‑state); Private: $50,000"
     },
-    {
-      name: "BBA in Management",
-      specializations: ["Operations", "Strategy", "Organizational Behavior"],
-      prerequisites:
-        "High School Diploma with basic knowledge of business principles",
-      description:
-        "Prepares students for leadership roles by teaching comprehensive management theories and practical skills.",
-      outcomes: [
-        "Develop effective leadership and management skills",
-        "Apply strategic thinking to real‑world challenges",
-        "Manage organizational change efficiently"
-      ],
-      tuitionFees:
-        "Public: $10,560 (in‑state) / $27,020 (out‑of‑state); Private: $52,000"
-    },
-    {
-      name: "BSc in Hospitality Management",
-      specializations: ["Hotel Management", "Tourism", "Event Planning"],
-      prerequisites:
-        "High School Diploma with an interest in service and management",
-      description:
-        "Focuses on the business and operational aspects of the hospitality industry, including customer service and event management.",
-      outcomes: [
-        "Master hospitality operations and management",
-        "Develop customer service excellence",
-        "Plan and execute successful events"
-      ],
-      tuitionFees:
-        "Public: $10,560 (in‑state) / $27,020 (out‑of‑state); Private: $52,000"
-    },
+    
+    
     {
       name: "BA in Fashion Design",
       specializations: ["Textile Design", "Fashion Merchandising", "Sustainable Fashion"],
@@ -366,7 +310,7 @@ export default function Universities() {
         "Analyze and respond to fashion trends"
       ],
       tuitionFees:
-        "Public: $10,560 (in‑state) / $27,020 (out‑of‑state); Private: $52,000"
+        "Public: $18,000 (in‑state) / $28,000 (out‑of‑state); Private: $40,000"
     }
   ];
 
@@ -430,8 +374,8 @@ export default function Universities() {
   ];
 
   return (
-    <section id="universities" className="scroll-mt-32 py-16 bg-gray-50">
-      <div className="max-w-7xl mx-auto space-y-10">
+    <section id="universities" className="scroll-mt-32 py-20">
+      <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="space-y-4">
           <h1 className="text-3xl font-bold text-gray-900 font-semibold border-l-4 border-purple-600 pl-4">
