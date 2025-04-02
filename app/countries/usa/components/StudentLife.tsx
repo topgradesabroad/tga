@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function StudentLife() {
   return (
-    <section id="student-life" className="scroll-mt-32 py-20">
+    <section id="student-life">
       <div className="max-w-7xl mx-auto">
         {/* Page Header */}
         <header className="mb-16 text-center">

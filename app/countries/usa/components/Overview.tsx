@@ -1,6 +1,6 @@
 export default function Overview() {
   return (
-    <section id="overview" className="scroll-mt-32 py-20">
+    <section id="overview">
       <div className="max-w-7xl mx-auto"></div>
       {/* International Student Statistics */}
       <div className="bg-white mb-12">

@@ -1,6 +1,7 @@
 import { DM_Sans, Poppins } from "next/font/google";
 import "./globals.css"; // Keep global styles
 import Header from '@/components/Header/Header'
+import Footer from '@/components/Footer'
 
 // Load Google Fonts
 const dmSans = DM_Sans({
@@ -17,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <Header></Header>
         {children}
-        
+        <Footer></Footer>
       </body>
     </html>
   );

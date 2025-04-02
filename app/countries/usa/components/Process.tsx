@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function Process() {
   return (
-    <section id="process" className="scroll-mt-32 py-20">
+    <section id="process">
       <div className="max-w-7xl mx-auto">
         {/* Page Header */}
         <header className="mb-16">

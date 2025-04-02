@@ -67,7 +67,7 @@ const faqs = [
 
 const USAFaqPage = () => {
   return (
-      <section id="faq" className="scroll-mt-32 py-20">
+      <section id="faq">
         <h2 className="text-3xl font-bold text-center mb-6">
           USA Study Abroad FAQs
         </h2>

@@ -11,12 +11,13 @@ const countries = [
   { name: 'Australia', flag: '/Flags/au.png', href: '/countries/australia' },
   { name: 'New Zealand', flag: '/Flags/nz.png', href: '/countries/new-zealand' },
   { name: 'Germany', flag: '/Flags/ge.png', href: '/countries/germany' },
+  { name: 'France', flag: '/Flags/fr.svg', href: '/countries/france' },
 ];
 
 // Main navigation items
 const navItems = [
   { name: 'Countries', href: '/countries', hasDropdown: true },
-  { name: 'Courses', href: '/courses', hasDropdown: false },
+  { name: 'Ivy League Applications', href: '/ivy-league-applications', hasDropdown: false },
   { name: 'Blog', href: '/blog', hasDropdown: false },
   { name: 'Resources', href: '/resources', hasDropdown: false },
 ];

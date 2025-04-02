@@ -2,10 +2,10 @@
 import React, { useEffect, useState } from "react";
 
 const images = [
-  "/ExpertiseSection/loan.webp",
-  "/ExpertiseSection/job.webp",
-  "/ExpertiseSection/counselling.webp",
-  "/ExpertiseSection/test.webp"
+  "/universities/harvard.jpg",
+  "/universities/stanford.jpg",
+  "/universities/brown.jpg",
+  "/universities/mit.jpg"
 ];
 
 const ImageSlider = () => {

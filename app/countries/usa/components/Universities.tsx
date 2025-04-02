@@ -374,7 +374,7 @@ export default function Universities() {
   ];
 
   return (
-    <section id="universities" className="scroll-mt-32 py-20">
+    <section id="universities">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="space-y-4">

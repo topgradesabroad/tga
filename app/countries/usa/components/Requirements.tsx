@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function USAEntryRequirements() {
   return (
-    <section id="requirements" className="scroll-mt-32 py-20">
+    <section id="requirements">
       <div className="max-w-7xl mx-auto">
         <h2 className="text-3xl font-bold mb-10 text-gray-900 border-l-4 pl-4 border-purple-600">
           Entry Requirements for US Programs

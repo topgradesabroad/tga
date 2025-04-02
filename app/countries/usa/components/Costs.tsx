@@ -2,7 +2,7 @@ import Head from 'next/head';
 
 export default function StudyCostPage() {
   return (
-    <section id="costs" className="scroll-mt-32 py-20">
+    <section id="costs">
         <div className="max-w-7xl mx-auto">
           {/* Page Header */}
           <header className="mb-12">
