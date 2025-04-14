@@ -52,7 +52,7 @@ const ServiceButton: React.FC<ServiceButtonProps> = ({ serviceTitle, calendlyUrl
   return (
     <button
       onClick={handleClick}
-      className="mt-16 px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg 
+      className="mt-16 px-6 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg 
                  transition-all duration-300 flex items-center space-x-2 group"
     >
       <span>{getButtonText(serviceTitle)}</span>

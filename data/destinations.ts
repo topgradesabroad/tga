@@ -31,7 +31,7 @@ export interface Destination {
         "MIT"
       ],
       costOfLiving:
-        "Approximately $1,500 - $2,500 per month, depending on the city."
+        "$1,500 - $2,500 per month, depending on the city."
     },
     {
       id: "uk",
@@ -39,7 +39,7 @@ export interface Destination {
       flagImage: "/Flags/uk.png",
       description:
         "Discover rich academic heritage, historic institutions, and a strong research tradition.",
-      universities: 130,
+      universities: 164,
       internationalStudents: 485000,
       highlights: [
         "Oxford & Cambridge",
@@ -52,7 +52,7 @@ export interface Destination {
         "Imperial College London"
       ],
       costOfLiving:
-        "Approximately £1,000 - £1,500 per month, depending on the location."
+        "£1,000 - £1,500 per month, depending on the location."
     },
     {
       id: "canada",
@@ -61,7 +61,7 @@ export interface Destination {
       description:
         "Enjoy high-quality education in a welcoming, multicultural environment.",
       universities: 98,
-      internationalStudents: 250000,
+      internationalStudents: 575000,
       highlights: [
         "High Quality of Life",
         "Inclusive Campuses",
@@ -73,7 +73,7 @@ export interface Destination {
         "University of British Columbia"
       ],
       costOfLiving:
-        "Approximately CAD 1,200 - CAD 2,000 per month, depending on the city."
+        "CAD 1,200 - CAD 2,000 per month, depending on the city."
     },
     {
       id: "australia",
@@ -82,7 +82,7 @@ export interface Destination {
       description:
         "Study in a vibrant, innovative environment with top-ranked universities and a relaxed lifestyle.",
       universities: 43,
-      internationalStudents: 320000,
+      internationalStudents: 710000,
       highlights: [
         "Research & Innovation",
         "Great Quality of Life",
@@ -94,7 +94,7 @@ export interface Destination {
         "University of Sydney"
       ],
       costOfLiving:
-        "Approximately AUD 1,500 - AUD 2,500 per month, depending on the city."
+        "AUD 1,500 - AUD 2,500 per month, depending on the city."
     },
     {
       id: "germany",
@@ -115,7 +115,7 @@ export interface Destination {
         "Humboldt University of Berlin"
       ],
       costOfLiving:
-        "Approximately €800 - €1,200 per month, depending on the city."
+        "€800 - €1,200 per month, depending on the city."
     },
     {
       id: "france",
@@ -136,7 +136,7 @@ export interface Destination {
         "Paris Sciences et Lettres University"
       ],
       costOfLiving:
-        "Approximately €1,000 - €1,500 per month, depending on the city."
+        "€1,000 - €1,500 per month, depending on the city."
     },
     {
       id: "new-zealand",
@@ -145,7 +145,7 @@ export interface Destination {
       description:
         "Study amidst breathtaking natural landscapes with a safe, friendly atmosphere.",
       universities: 8,
-      internationalStudents: 65000,
+      internationalStudents: 205000,
       highlights: [
         "Stunning Landscapes",
         "Safe & Welcoming",
@@ -157,7 +157,7 @@ export interface Destination {
         "Victoria University of Wellington"
       ],
       costOfLiving:
-        "Approximately NZD 1,500 - NZD 2,000 per month, depending on the city."
+        "NZD 1,500 - NZD 2,000 per month, depending on the city."
     }
   ];
   

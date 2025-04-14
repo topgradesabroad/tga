@@ -15,7 +15,7 @@ const TestimonialCard: React.FC<{ testimonial: Testimonial }> = ({ testimonial }
     </div>
 
     <div className="relative">
-      <div className="absolute -top-4 -left-4 w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
+      <div className="absolute -top-4 -left-4 w-12 h-12 bg-rose-500 rounded-full flex items-center justify-center">
         <GraduationCap className="w-6 h-6 text-white" />
       </div>
       <img
@@ -67,7 +67,7 @@ const TestimonialSectionClient: React.FC<TestimonialSectionClientProps> = ({ tes
           <h2 className="text-4xl font-bold text-gray-900 mb-3">
             Student Success Stories
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-purple-600 text-lg max-w-3xl mx-auto">
             Hear from our talented students about their learning journey and how they're achieving their academic goals.
           </p>
         </div>

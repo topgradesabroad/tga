@@ -1,0 +1,50 @@
+[
+    {
+      "id": "sop-engineering",
+      "title": "Engineering SOP Sample",
+      "description": "Perfect sample for students applying to engineering programs abroad",
+      "category": "Statement of Purpose",
+      "thumbnail": "/images/resources/sop-engineering.jpg",
+      "fileName": "sop-engineering.json"
+    },
+    {
+      "id": "sop-business",
+      "title": "Business School SOP Sample",
+      "description": "Tailored for MBA and business program applications",
+      "category": "Statement of Purpose",
+      "thumbnail": "/images/resources/sop-business.jpg",
+      "fileName": "sop-business.json"
+    },
+    {
+      "id": "sop-computer-science",
+      "title": "Computer Science SOP Sample",
+      "description": "Ideal for students applying to CS and technology programs",
+      "category": "Statement of Purpose",
+      "thumbnail": "/images/resources/sop-cs.jpg",
+      "fileName": "sop-computer-science.json"
+    },
+    {
+      "id": "lor-professor",
+      "title": "Professor LOR Template",
+      "description": "Template for requesting letters from academic references",
+      "category": "Letter of Recommendation",
+      "thumbnail": "/images/resources/lor-professor.jpg",
+      "fileName": "lor-professor.json"
+    },
+    {
+      "id": "cv-template",
+      "title": "International CV Template",
+      "description": "CV format optimized for international university applications",
+      "category": "Resume/CV",
+      "thumbnail": "/images/resources/cv-template.jpg",
+      "fileName": "cv-template.json"
+    },
+    {
+      "id": "harvard-sample",
+      "title": "Harvard Application Sample",
+      "description": "Complete application sample for Harvard University",
+      "category": "Ivy League Applications",
+      "thumbnail": "/images/resources/harvard-sample.jpg",
+      "fileName": "harvard-sample.json"
+    }
+  ]

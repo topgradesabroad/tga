@@ -1,1650 +1,663 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Tab } from '@headlessui/react';
-import { ChevronDownIcon, GlobeIcon, BookOpenIcon, AcademicCapIcon, ChartBarIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
+import {
+  predictAdmission,
+  ProgramType,
+  StrengthLevel,
+  PredictionResult,
+} from './IvyData';
+import { 
+  GraduationCap, 
+  Briefcase, 
+  ChevronRight, 
+  Medal, 
+  Award, 
+  LucideIcon, 
+  BookOpen, 
+  Users, 
+  DollarSign, 
+  TrendingUp, 
+  ChevronDown, 
+  ChevronUp,
+  X, 
+  Star, 
+  BarChart, 
+  CheckCircle,
+  AlertTriangle
+} from 'lucide-react';
 
-// Types for our application
-type Region = 'US' | 'UK' | 'Europe' | 'Asia' | 'Australia' | 'Canada';
-type SchoolType = 'Undergraduate' | 'MBA' | 'Graduate';
-type ApplicationStatus = 'Reach' | 'Target' | 'Safety';
+type Tab = 'profile' | 'results';
 
-// University structure with detailed metrics
-interface University {
-  id: string;
-  name: string;
-  region: Region;
-  ranking: number; 
-  admissionRate: number;
-  averageGPA: number;
-  medianSAT?: number;
-  medianACT?: number;
-  medianGMAT?: number;
-  medianGRE?: number;
-  acceptedGPARange: {
-    min: number;
-    max: number;
-  };
-  acceptedSATRange?: {
-    min: number;
-    max: number;
-  };
-  acceptedACTRange?: {
-    min: number;
-    max: number;
-  };
-  acceptedGMATRange?: {
-    min: number;
-    max: number;
-  };
-  acceptedGRERange?: {
-    min: number;
-    max: number;
-  };
-  tuition: {
-    domestic: number;
-    international: number;
-  };
-  weights: {
-    academicWeight: number;
-    extracurricularWeight: number;
-    essaysWeight: number;
-    recommendationsWeight: number;
-    leadershipWeight: number;
-    workExperienceWeight?: number;
-    researchWeight?: number;
-    internationalWeight: number;
-    legacyWeight: number;
-    diversityWeight: number;
-  };
-}
+const AdmissionsPredictor: React.FC = () => {
+  // Multi-step form state
+  const [step, setStep] = useState<number>(1);
+  const [programType, setProgramType] = useState<ProgramType>('undergraduate');
 
-// Student profile type
-interface StudentProfile {
-  schoolType: SchoolType;
-  gpa: number;
-  satScore?: number;
-  actScore?: number;
-  gmatScore?: number;
-  greScore?: number;
-  extraCurricular: number;
-  essays: number;
-  recommendations: number;
-  leadership: number;
-  workExperience?: number;
-  research?: number;
-  international: boolean;
-  legacy: boolean;
-  demographics: {
-    ethnicity: string;
-    gender: string;
-    firstGeneration: boolean;
-    lowIncome: boolean;
-  };
-  intendedMajor: string;
-  awards: number;
-  communityService: number;
-}
+  // Step 1 fields
+  const [gpa, setGpa] = useState<number>(3.8);
+  const [testScore, setTestScore] = useState<number>(1450);
+  const [essaysStrength, setEssaysStrength] = useState<StrengthLevel>(4);
+  const [recommendationStrength, setRecommendationStrength] = useState<StrengthLevel>(4);
 
-// Result type
-interface AdmissionResult {
-  university: University;
-  chance: number;
-  status: ApplicationStatus;
-  fitScore: number;
-  financialAid: number;
-  comments: string[];
-  strengths: string[];
-  improvements: string[];
-}
+  // Step 2 fields
+  const [leadershipRoles, setLeadershipRoles] = useState<number>(1);
+  const [researchExperience, setResearchExperience] = useState<boolean>(false);
+  const [extracurriculars, setExtracurriculars] = useState<string[]>(['Debate Club', 'Volunteer Work']);
+  const [newExtracurricular, setNewExtracurricular] = useState<string>('');
+  const [workExperience, setWorkExperience] = useState<number>(3);
+  const [awards, setAwards] = useState<string[]>(['Honor Roll']);
+  const [newAward, setNewAward] = useState<string>('');
 
-// Database of universities
-const universityDatabase: University[] = [
-  // Ivy League - US
-  {
-    id: 'harvard',
-    name: 'Harvard University',
-    region: 'US',
-    ranking: 1,
-    admissionRate: 3.2,
-    averageGPA: 4.0,
-    medianSAT: 1520,
-    medianACT: 35,
-    medianGMAT: 735,
-    medianGRE: 330,
-    acceptedGPARange: { min: 3.8, max: 4.0 },
-    acceptedSATRange: { min: 1480, max: 1580 },
-    acceptedACTRange: { min: 33, max: 36 },
-    acceptedGMATRange: { min: 710, max: 760 },
-    acceptedGRERange: { min: 320, max: 340 },
-    tuition: { domestic: 54002, international: 54002 },
-    weights: {
-      academicWeight: 0.4,
-      extracurricularWeight: 0.2,
-      essaysWeight: 0.15,
-      recommendationsWeight: 0.1,
-      leadershipWeight: 0.1,
-      workExperienceWeight: 0.05,
-      researchWeight: 0.05,
-      internationalWeight: 0.03,
-      legacyWeight: 0.07,
-      diversityWeight: 0.05
-    }
-  },
-  {
-    id: 'yale',
-    name: 'Yale University',
-    region: 'US',
-    ranking: 3,
-    admissionRate: 4.6,
-    averageGPA: 3.95,
-    medianSAT: 1510,
-    medianACT: 34,
-    medianGMAT: 725,
-    medianGRE: 328,
-    acceptedGPARange: { min: 3.75, max: 4.0 },
-    acceptedSATRange: { min: 1460, max: 1570 },
-    acceptedACTRange: { min: 33, max: 36 },
-    acceptedGMATRange: { min: 700, max: 750 },
-    acceptedGRERange: { min: 318, max: 338 },
-    tuition: { domestic: 55500, international: 55500 },
-    weights: {
-      academicWeight: 0.35,
-      extracurricularWeight: 0.25,
-      essaysWeight: 0.15,
-      recommendationsWeight: 0.1,
-      leadershipWeight: 0.05,
-      workExperienceWeight: 0.05,
-      researchWeight: 0.05,
-      internationalWeight: 0.03,
-      legacyWeight: 0.07,
-      diversityWeight: 0.05
-    }
-  },
-  {
-    id: 'princeton',
-    name: 'Princeton University',
-    region: 'US',
-    ranking: 2,
-    admissionRate: 3.8,
-    averageGPA: 3.9,
-    medianSAT: 1510,
-    medianACT: 34,
-    medianGMAT: 725,
-    medianGRE: 329,
-    acceptedGPARange: { min: 3.7, max: 4.0 },
-    acceptedSATRange: { min: 1450, max: 1570 },
-    acceptedACTRange: { min: 32, max: 36 },
-    acceptedGMATRange: { min: 700, max: 750 },
-    acceptedGRERange: { min: 318, max: 338 },
-    tuition: { domestic: 56010, international: 56010 },
-    weights: {
-      academicWeight: 0.4,
-      extracurricularWeight: 0.2,
-      essaysWeight: 0.15,
-      recommendationsWeight: 0.1,
-      leadershipWeight: 0.05,
-      workExperienceWeight: 0.05,
-      researchWeight: 0.05,
-      internationalWeight: 0.02,
-      legacyWeight: 0.06,
-      diversityWeight: 0.07
-    }
-  },
-  {
-    id: 'stanford',
-    name: 'Stanford University',
-    region: 'US',
-    ranking: 4,
-    admissionRate: 3.9,
-    averageGPA: 3.96,
-    medianSAT: 1520,
-    medianACT: 35,
-    medianGMAT: 733,
-    medianGRE: 330,
-    acceptedGPARange: { min: 3.8, max: 4.0 },
-    acceptedSATRange: { min: 1470, max: 1570 },
-    acceptedACTRange: { min: 33, max: 36 },
-    acceptedGMATRange: { min: 710, max: 760 },
-    acceptedGRERange: { min: 320, max: 340 },
-    tuition: { domestic: 56169, international: 56169 },
-    weights: {
-      academicWeight: 0.35,
-      extracurricularWeight: 0.25,
-      essaysWeight: 0.2,
-      recommendationsWeight: 0.1,
-      leadershipWeight: 0.05,
-      workExperienceWeight: 0.05,
-      researchWeight: 0.1,
-      internationalWeight: 0.02,
-      legacyWeight: 0.03,
-      diversityWeight: 0.05
-    }
-  },
-  {
-    id: 'mit',
-    name: 'MIT',
-    region: 'US',
-    ranking: 5,
-    admissionRate: 4.1,
-    averageGPA: 3.95,
-    medianSAT: 1535,
-    medianACT: 35,
-    medianGMAT: 730,
-    medianGRE: 331,
-    acceptedGPARange: { min: 3.8, max: 4.0 },
-    acceptedSATRange: { min: 1500, max: 1580 },
-    acceptedACTRange: { min: 34, max: 36 },
-    acceptedGMATRange: { min: 710, max: 760 },
-    acceptedGRERange: { min: 325, max: 340 },
-    tuition: { domestic: 55878, international: 55878 },
-    weights: {
-      academicWeight: 0.45,
-      extracurricularWeight: 0.2,
-      essaysWeight: 0.1,
-      recommendationsWeight: 0.1,
-      leadershipWeight: 0.05,
-      workExperienceWeight: 0.05,
-      researchWeight: 0.15,
-      internationalWeight: 0.01,
-      legacyWeight: 0.02,
-      diversityWeight: 0.02
-    }
-  },
-  
-  // UK Universities
-  {
-    id: 'oxford',
-    name: 'University of Oxford',
-    region: 'UK',
-    ranking: 6,
-    admissionRate: 13.2,
-    averageGPA: 3.85,
-    medianSAT: 1500,
-    medianACT: 34,
-    medianGMAT: 725,
-    medianGRE: 328,
-    acceptedGPARange: { min: 3.7, max: 4.0 },
-    acceptedSATRange: { min: 1450, max: 1570 },
-    acceptedACTRange: { min: 32, max: 36 },
-    acceptedGMATRange: { min: 700, max: 750 },
-    acceptedGRERange: { min: 318, max: 338 },
-    tuition: { domestic: 9250, international: 38000 },
-    weights: {
-      academicWeight: 0.6,
-      extracurricularWeight: 0.1,
-      essaysWeight: 0.1,
-      recommendationsWeight: 0.1,
-      leadershipWeight: 0.05,
-      workExperienceWeight: 0.05,
-      researchWeight: 0.1,
-      internationalWeight: 0.02,
-      legacyWeight: 0.01,
-      diversityWeight: 0.02
-    }
-  },
-  {
-    id: 'cambridge',
-    name: 'University of Cambridge',
-    region: 'UK',
-    ranking: 7,
-    admissionRate: 15.3,
-    averageGPA: 3.85,
-    medianSAT: 1500,
-    medianACT: 34,
-    medianGMAT: 720,
-    medianGRE: 328,
-    acceptedGPARange: { min: 3.7, max: 4.0 },
-    acceptedSATRange: { min: 1450, max: 1570 },
-    acceptedACTRange: { min: 32, max: 36 },
-    acceptedGMATRange: { min: 700, max: 750 },
-    acceptedGRERange: { min: 318, max: 338 },
-    tuition: { domestic: 9250, international: 37000 },
-    weights: {
-      academicWeight: 0.6,
-      extracurricularWeight: 0.1,
-      essaysWeight: 0.1,
-      recommendationsWeight: 0.1,
-      leadershipWeight: 0.02,
-      workExperienceWeight: 0.03,
-      researchWeight: 0.15,
-      internationalWeight: 0.02,
-      legacyWeight: 0.01,
-      diversityWeight: 0.02
-    }
-  },
-  
-  // European Universities
-  {
-    id: 'eth',
-    name: 'ETH Zurich',
-    region: 'Europe',
-    ranking: 15,
-    admissionRate: 25.0,
-    averageGPA: 3.7,
-    medianSAT: 1450,
-    medianACT: 32,
-    medianGMAT: 710,
-    medianGRE: 325,
-    acceptedGPARange: { min: 3.5, max: 4.0 },
-    acceptedSATRange: { min: 1400, max: 1540 },
-    acceptedACTRange: { min: 30, max: 35 },
-    acceptedGMATRange: { min: 690, max: 740 },
-    acceptedGRERange: { min: 315, max: 335 },
-    tuition: { domestic: 1460, international: 1460 },
-    weights: {
-      academicWeight: 0.7,
-      extracurricularWeight: 0.05,
-      essaysWeight: 0.05,
-      recommendationsWeight: 0.1,
-      leadershipWeight: 0.02,
-      workExperienceWeight: 0.03,
-      researchWeight: 0.15,
-      internationalWeight: 0.05,
-      legacyWeight: 0,
-      diversityWeight: 0.05
-    }
-  },
-  {
-    id: 'epfl',
-    name: 'EPFL',
-    region: 'Europe',
-    ranking: 22,
-    admissionRate: 24.0,
-    averageGPA: 3.65,
-    medianSAT: 1430,
-    medianACT: 32,
-    medianGMAT: 700,
-    medianGRE: 320,
-    acceptedGPARange: { min: 3.5, max: 4.0 },
-    acceptedSATRange: { min: 1380, max: 1520 },
-    acceptedACTRange: { min: 30, max: 35 },
-    acceptedGMATRange: { min: 680, max: 730 },
-    acceptedGRERange: { min: 310, max: 330 },
-    tuition: { domestic: 1460, international: 1460 },
-    weights: {
-      academicWeight: 0.7,
-      extracurricularWeight: 0.05,
-      essaysWeight: 0.05,
-      recommendationsWeight: 0.1,
-      leadershipWeight: 0.02,
-      workExperienceWeight: 0.03,
-      researchWeight: 0.15,
-      internationalWeight: 0.05,
-      legacyWeight: 0,
-      diversityWeight: 0.05
-    }
-  },
-  
-  // Asian Universities
-  {
-    id: 'nus',
-    name: 'National University of Singapore',
-    region: 'Asia',
-    ranking: 20,
-    admissionRate: 7.0,
-    averageGPA: 3.8,
-    medianSAT: 1480,
-    medianACT: 33,
-    medianGMAT: 710,
-    medianGRE: 325,
-    acceptedGPARange: { min: 3.6, max: 4.0 },
-    acceptedSATRange: { min: 1400, max: 1540 },
-    acceptedACTRange: { min: 31, max: 36 },
-    acceptedGMATRange: { min: 690, max: 740 },
-    acceptedGRERange: { min: 315, max: 335 },
-    tuition: { domestic: 8200, international: 17550 },
-    weights: {
-      academicWeight: 0.6,
-      extracurricularWeight: 0.1,
-      essaysWeight: 0.1,
-      recommendationsWeight: 0.1,
-      leadershipWeight: 0.05,
-      workExperienceWeight: 0.05,
-      researchWeight: 0.1,
-      internationalWeight: 0.05,
-      legacyWeight: 0,
-      diversityWeight: 0.05
-    }
-  },
-  {
-    id: 'utokyo',
-    name: 'University of Tokyo',
-    region: 'Asia',
-    ranking: 26,
-    admissionRate: 35.0,
-    averageGPA: 3.7,
-    medianSAT: 1450,
-    medianACT: 32,
-    medianGMAT: 700,
-    medianGRE: 320,
-    acceptedGPARange: { min: 3.5, max: 4.0 },
-    acceptedSATRange: { min: 1390, max: 1530 },
-    acceptedACTRange: { min: 30, max: 35 },
-    acceptedGMATRange: { min: 680, max: 730 },
-    acceptedGRERange: { min: 310, max: 330 },
-    tuition: { domestic: 5200, international: 8800 },
-    weights: {
-      academicWeight: 0.7,
-      extracurricularWeight: 0.05,
-      essaysWeight: 0.05,
-      recommendationsWeight: 0.1,
-      leadershipWeight: 0.05,
-      workExperienceWeight: 0.05,
-      researchWeight: 0.1,
-      internationalWeight: 0.05,
-      legacyWeight: 0,
-      diversityWeight: 0.05
-    }
-  },
-];
+  // Results and UI state
+  const [results, setResults] = useState<PredictionResult[]>([]);
+  const [activeTab, setActiveTab] = useState<Tab>('profile');
+  const [expandedUniversity, setExpandedUniversity] = useState<number | null>(null);
+  const [selectedUniversity, setSelectedUniversity] = useState<PredictionResult | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
-// Main Component
-const GlobalUniversityAdmissionPredictor: React.FC = () => {
-  // State for the application
-  const [schoolType, setSchoolType] = useState<SchoolType>('Undergraduate');
-  const [regionFilters, setRegionFilters] = useState<Region[]>(['US', 'UK', 'Europe', 'Asia', 'Australia', 'Canada']);
-  const [studentProfile, setStudentProfile] = useState<StudentProfile>({
-    schoolType: 'Undergraduate',
-    gpa: 0,
-    satScore: undefined,
-    actScore: undefined,
-    gmatScore: undefined,
-    greScore: undefined,
-    extraCurricular: 5,
-    essays: 5,
-    recommendations: 5,
-    leadership: 5,
-    workExperience: 0,
-    research: 0,
-    international: false,
-    legacy: false,
-    demographics: {
-      ethnicity: '',
-      gender: '',
-      firstGeneration: false,
-      lowIncome: false
-    },
-    intendedMajor: '',
-    awards: 5,
-    communityService: 5
-  });
-  const [results, setResults] = useState<AdmissionResult[]>([]);
-  const [activeTab, setActiveTab] = useState(0);
-  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-  const [isCalculating, setIsCalculating] = useState(false);
-
-  // Effect to reset specific fields when school type changes
   useEffect(() => {
-    const resetProfile: StudentProfile = {
-      ...studentProfile,
-      schoolType,
-      satScore: schoolType === 'Undergraduate' ? studentProfile.satScore : undefined,
-      actScore: schoolType === 'Undergraduate' ? studentProfile.actScore : undefined,
-      gmatScore: schoolType === 'MBA' ? studentProfile.gmatScore : undefined,
-      greScore: schoolType === 'Graduate' || schoolType === 'MBA' ? studentProfile.greScore : undefined,
-      workExperience: schoolType === 'MBA' || schoolType === 'Graduate' ? studentProfile.workExperience : 0,
-      research: schoolType === 'Graduate' ? studentProfile.research : 0,
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Handlers
+  const handleProgramChange = (type: ProgramType) => {
+    setProgramType(type);
+  };
+
+  const handleAddExtracurricular = () => {
+    if (newExtracurricular.trim() && extracurriculars.length < 10) {
+      setExtracurriculars([...extracurriculars, newExtracurricular.trim()]);
+      setNewExtracurricular('');
+    }
+  };
+
+  const handleRemoveExtracurricular = (index: number) => {
+    const updated = [...extracurriculars];
+    updated.splice(index, 1);
+    setExtracurriculars(updated);
+  };
+
+  const handleAddAward = () => {
+    if (newAward.trim() && awards.length < 5) {
+      setAwards([...awards, newAward.trim()]);
+      setNewAward('');
+    }
+  };
+
+  const handleRemoveAward = (index: number) => {
+    const updated = [...awards];
+    updated.splice(index, 1);
+    setAwards(updated);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const input = {
+      programType,
+      GPA: gpa,
+      testScore,
+      extracurriculars,
+      workExperience,
+      essaysStrength,
+      recommendationStrength,
+      leadershipRoles,
+      researchExperience,
+      awards
     };
-    setStudentProfile(resetProfile);
-  }, [schoolType]);
-
-  // Handle input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target as HTMLInputElement;
-    
-    if (type === 'checkbox') {
-      const checked = (e.target as HTMLInputElement).checked;
-      
-      if (name.includes('.')) {
-        const [parent, child] = name.split('.');
-        setStudentProfile(prev => ({
-          ...prev,
-          [parent]: {
-            ...(prev as any)[parent],
-            [child]: checked
-          }
-        }));
-      } else {
-        setStudentProfile(prev => ({
-          ...prev,
-          [name]: checked
-        }));
-      }
-    } else if (type === 'number') {
-      const numberValue = value === '' ? '' : Number(value);
-      
-      if (name.includes('.')) {
-        const [parent, child] = name.split('.');
-        setStudentProfile(prev => ({
-          ...prev,
-          [parent]: {
-            ...(prev as any)[parent],
-            [child]: numberValue
-          }
-        }));
-      } else {
-        setStudentProfile(prev => ({
-          ...prev,
-          [name]: numberValue
-        }));
-      }
-    } else {
-      if (name.includes('.')) {
-        const [parent, child] = name.split('.');
-        setStudentProfile(prev => ({
-          ...prev,
-          [parent]: {
-            ...(prev as any)[parent],
-            [child]: value
-          }
-        }));
-      } else {
-        setStudentProfile(prev => ({
-          ...prev,
-          [name]: value
-        }));
-      }
-    }
-    
-    // Clear validation error when field is updated
-    if (validationErrors[name]) {
-      setValidationErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
-      });
-    }
+    const predictionResults = predictAdmission(input);
+    setResults(predictionResults);
+    setActiveTab('results');
   };
 
-  // Toggle region filters
-  const toggleRegionFilter = (region: Region) => {
-    setRegionFilters(prev => 
-      prev.includes(region) 
-        ? prev.filter(r => r !== region) 
-        : [...prev, region]
-    );
+  const handleReset = () => {
+    setStep(1);
+    setProgramType('undergraduate');
+    setGpa(3.8);
+    setTestScore(1450);
+    setEssaysStrength(4);
+    setRecommendationStrength(4);
+    setLeadershipRoles(1);
+    setResearchExperience(false);
+    setExtracurriculars(['Debate Club', 'Volunteer Work']);
+    setWorkExperience(3);
+    setAwards(['Honor Roll']);
+    setActiveTab('profile');
+    setExpandedUniversity(null);
+    setSelectedUniversity(null);
   };
 
-  // Validate form before calculation
-  const validateForm = (): boolean => {
-    const errors: Record<string, string> = {};
-    
-    if (!studentProfile.gpa) {
-      errors.gpa = 'GPA is required';
-    } else if (studentProfile.gpa < 0 || studentProfile.gpa > 4.0) {
-      errors.gpa = 'GPA must be between 0 and 4.0';
-    }
-    
-    if (schoolType === 'Undergraduate') {
-      if (!studentProfile.satScore && !studentProfile.actScore) {
-        errors.satScore = 'Either SAT or ACT score is required';
-        errors.actScore = 'Either SAT or ACT score is required';
-      } else {
-        if (studentProfile.satScore && (studentProfile.satScore < 400 || studentProfile.satScore > 1600)) {
-          errors.satScore = 'SAT score must be between 400 and 1600';
-        }
-        if (studentProfile.actScore && (studentProfile.actScore < 1 || studentProfile.actScore > 36)) {
-          errors.actScore = 'ACT score must be between 1 and 36';
-        }
-      }
-    } else if (schoolType === 'MBA') {
-      if (!studentProfile.gmatScore && !studentProfile.greScore) {
-        errors.gmatScore = 'Either GMAT or GRE score is required';
-        errors.greScore = 'Either GMAT or GRE score is required';
-      } else {
-        if (studentProfile.gmatScore && (studentProfile.gmatScore < 200 || studentProfile.gmatScore > 800)) {
-          errors.gmatScore = 'GMAT score must be between 200 and 800';
-        }
-        if (studentProfile.greScore && (studentProfile.greScore < 260 || studentProfile.greScore > 340)) {
-          errors.greScore = 'GRE score must be between 260 and 340';
-        }
-      }
-      
-      if (!studentProfile.workExperience && studentProfile.workExperience !== 0) {
-        errors.workExperience = 'Work experience is required for MBA applications';
-      }
-    } else if (schoolType === 'Graduate') {
-      if (!studentProfile.greScore) {
-        errors.greScore = 'GRE score is required for graduate applications';
-      } else if (studentProfile.greScore < 260 || studentProfile.greScore > 340) {
-        errors.greScore = 'GRE score must be between 260 and 340';
-      }
-      
-      if (studentProfile.research === undefined) {
-        errors.research = 'Research experience is required for graduate applications';
-      }
-    }
-    
-    setValidationErrors(errors);
-    return Object.keys(errors).length === 0;
+  // Helper rendering functions
+  const renderStepIndicator = () => (
+    <div className="flex items-center justify-center mb-8">
+      <div className="flex items-center space-x-2">
+        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${
+          step === 1 ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-600'
+        }`}>
+          1
+        </div>
+        <div className={`w-16 h-1 ${step === 1 ? 'bg-gray-300' : 'bg-purple-600'}`}></div>
+        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${
+          step === 2 ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-600'
+        }`}>
+          2
+        </div>
+      </div>
+    </div>
+  );
+
+  const getAdmissionChanceColor = (probability: number) => {
+    if (probability >= 75) return { bg: 'bg-emerald-100', text: 'text-emerald-800', icon: <CheckCircle size={16} className="text-emerald-500" /> };
+    if (probability >= 50) return { bg: 'bg-amber-100', text: 'text-amber-800', icon: <AlertTriangle size={16} className="text-amber-500" /> };
+    return { bg: 'bg-rose-100', text: 'text-rose-800', icon: <AlertTriangle size={16} className="text-rose-500" /> };
   };
 
-  // Advanced algorithm for calculating admission chances
-  const calculateAdmissionChances = () => {
-    if (!validateForm()) return;
-    
-    setIsCalculating(true);
-    
-    // Use setTimeout to simulate complex calculations
-    setTimeout(() => {
-      const filteredUniversities = universityDatabase.filter(
-        uni => regionFilters.includes(uni.region)
-      );
-      
-      const calculatedResults: AdmissionResult[] = filteredUniversities.map(university => {
-        // Base academic score calculation
-        let academicScore = 0;
-        let testScore = 0;
-        let academicMax = 100;
-        
-        // GPA score: Normalized against university's expected GPA
-        const gpaRatio = studentProfile.gpa / university.averageGPA;
-        const normalizedGPA = Math.min(1.1, Math.max(0.4, gpaRatio)) * 100;
-        academicScore += normalizedGPA * 0.5;
-        
-        // Test score calculation
-        if (schoolType === 'Undergraduate') {
-          if (studentProfile.satScore && university.medianSAT) {
-            const satRatio = studentProfile.satScore / university.medianSAT;
-            testScore = Math.min(1.1, Math.max(0.5, satRatio)) * 100;
-          } else if (studentProfile.actScore && university.medianACT) {
-            const actRatio = studentProfile.actScore / university.medianACT;
-            testScore = Math.min(1.1, Math.max(0.5, actRatio)) * 100;
-          }
-        } else if (schoolType === 'MBA') {
-          if (studentProfile.gmatScore && university.medianGMAT) {
-            const gmatRatio = studentProfile.gmatScore / university.medianGMAT;
-            testScore = Math.min(1.1, Math.max(0.5, gmatRatio)) * 100;
-          } else if (studentProfile.greScore && university.medianGRE) {
-            const greRatio = studentProfile.greScore / university.medianGRE;
-            testScore = Math.min(1.1, Math.max(0.5, greRatio)) * 100;
-          }
-        } else if (schoolType === 'Graduate' && studentProfile.greScore && university.medianGRE) {
-          const greRatio = studentProfile.greScore / university.medianGRE;
-          testScore = Math.min(1.1, Math.max(0.5, greRatio)) * 100;
-        }
-        
-        academicScore += testScore * 0.5;
-        
-        // Calculate holistic score components
-        const extracurricularScore = (studentProfile.extraCurricular / 10) * 100;
-        const essaysScore = (studentProfile.essays / 10) * 100;
-        const recommendationsScore = (studentProfile.recommendations / 10) * 100;
-        const leadershipScore = (studentProfile.leadership / 10) * 100;
-        const awardsScore = (studentProfile.awards / 10) * 100;
-        const communityServiceScore = (studentProfile.communityService / 10) * 100;
-        
-        // Work experience and research score
-        let workExperienceScore = 0;
-        let researchScore = 0;
-        
-        if (schoolType === 'MBA' || schoolType === 'Graduate') {
-          const workExpYears = studentProfile.workExperience || 0;
-          const expectedWorkExp = university.weights.workExperienceWeight ? 5 : 2;
-          workExperienceScore = Math.min(100, (workExpYears / expectedWorkExp) * 100);
-        }
-        
-        if (schoolType === 'Graduate') {
-          researchScore = (studentProfile.research || 0) * 10;
-        }
-        
-        // Demographic factors
-        const internationalFactor = studentProfile.international ? -5 : 0;
-        const legacyFactor = studentProfile.legacy ? 10 : 0;
-        const diversityFactor = (studentProfile.demographics.firstGeneration || 
-                               studentProfile.demographics.lowIncome) ? 5 : 0;
-        
-        // Calculate weighted scores using university-specific weights
-        const weights = university.weights;
-        const weightedAcademicScore = academicScore * weights.academicWeight;
-        const weightedExtracurricularScore = extracurricularScore * weights.extracurricularWeight;
-        const weightedEssaysScore = essaysScore * weights.essaysWeight;
-        const weightedRecommendationsScore = recommendationsScore * weights.recommendationsWeight;
-        const weightedLeadershipScore = leadershipScore * weights.leadershipWeight;
-        const weightedWorkExperienceScore = workExperienceScore * (weights.workExperienceWeight || 0);
-        const weightedResearchScore = researchScore * (weights.researchWeight || 0);
-        const weightedAwardsScore = awardsScore * 0.05;
-        const weightedCommunityServiceScore = communityServiceScore * 0.05;
-        
-        const demographicAdjustment = 
-          (internationalFactor * weights.internationalWeight * 10) + 
-          (legacyFactor * weights.legacyWeight * 10) + 
-          (diversityFactor * weights.diversityWeight * 10);
-        
-        // Combine all factors
-        let totalScore = 
-          weightedAcademicScore + 
-          weightedExtracurricularScore + 
-          weightedEssaysScore + 
-          weightedRecommendationsScore + 
-          weightedLeadershipScore + 
-          weightedWorkExperienceScore + 
-          weightedResearchScore + 
-          weightedAwardsScore +
-          weightedCommunityServiceScore;
-        
-        // Apply demographic adjustments and admission rate impact
-        const admissionRateImpact = (1 - (university.admissionRate / 100)) * 15;
-        totalScore = totalScore - admissionRateImpact + demographicAdjustment;
-        
-        // Normalize to percentage (1-99%)
-        // Normalize to percentage (1-99%)
-        const finalChance = Math.min(99, Math.max(1, totalScore));
-        
-        // Determine application status
-        let status: ApplicationStatus;
-        if (finalChance >= 70) {
-          status = 'Safety';
-        } else if (finalChance >= 30) {
-          status = 'Target';
-        } else {
-          status = 'Reach';
-        }
-        
-        // Calculate fit score based on student profile and university characteristics
-        const fitScore = calculateFitScore(studentProfile, university);
-        
-        // Estimate financial aid based on university and student demographics
-        const financialAid = calculateFinancialAid(studentProfile, university);
-        
-        // Generate personalized comments
-        const [comments, strengths, improvements] = generateFeedback(studentProfile, university, finalChance);
-        
-        return {
-          university,
-          chance: Math.round(finalChance),
-          status,
-          fitScore,
-          financialAid,
-          comments,
-          strengths,
-          improvements
-        };
-      });
-      
-      // Sort by chance descending
-      const sortedResults = calculatedResults.sort((a, b) => b.chance - a.chance);
-      
-      setResults(sortedResults);
-      setIsCalculating(false);
-    }, 1000);
-  };
-  
-  // Calculate fit score between student and university
-  const calculateFitScore = (student: StudentProfile, university: University): number => {
-    // Base fit on academic alignment
-    let baseScore = 0;
-    
-    // Academic fit
-    if (student.gpa >= university.acceptedGPARange.min) {
-      baseScore += 25;
-    }
-    
-    // Test score fit
-    let testScoreFit = 0;
-    if (student.schoolType === 'Undergraduate') {
-      if (student.satScore && university.acceptedSATRange && 
-          student.satScore >= university.acceptedSATRange.min) {
-        testScoreFit = 25;
-      } else if (student.actScore && university.acceptedACTRange && 
-                student.actScore >= university.acceptedACTRange.min) {
-        testScoreFit = 25;
-      }
-    } else if (student.schoolType === 'MBA') {
-      if (student.gmatScore && university.acceptedGMATRange && 
-          student.gmatScore >= university.acceptedGMATRange.min) {
-        testScoreFit = 25;
-      } else if (student.greScore && university.acceptedGRERange && 
-                student.greScore >= university.acceptedGRERange.min) {
-        testScoreFit = 25;
-      }
-    } else if (student.schoolType === 'Graduate') {
-      if (student.greScore && university.acceptedGRERange && 
-          student.greScore >= university.acceptedGRERange.min) {
-        testScoreFit = 25;
-      }
-    }
-    
-    baseScore += testScoreFit;
-    
-    // Extracurricular alignment based on university weights
-    const weights = university.weights;
-    let extracurricularFit = 0;
-    
-    if (weights.extracurricularWeight > 0.15 && student.extraCurricular >= 7) {
-      extracurricularFit += 10;
-    }
-    
-    if (weights.leadershipWeight > 0.05 && student.leadership >= 7) {
-      extracurricularFit += 10;
-    }
-    
-    if (weights.essaysWeight > 0.15 && student.essays >= 8) {
-      extracurricularFit += 10;
-    }
-    
-    if (weights.researchWeight && weights.researchWeight > 0.1 && student.research && student.research >= 7) {
-      extracurricularFit += 10;
-    }
-    
-    if (weights.workExperienceWeight && weights.workExperienceWeight > 0.05 && 
-        student.workExperience && student.workExperience >= 3) {
-      extracurricularFit += 10;
-    }
-    
-    baseScore += extracurricularFit;
-    
-    // Normalize to 100
-    return Math.min(100, baseScore + 20);
-  };
-  
-  // Calculate estimated financial aid
-  const calculateFinancialAid = (student: StudentProfile, university: University): number => {
-    const baseTuition = student.international ? university.tuition.international : university.tuition.domestic;
-    
-    // Base aid percentage
-    let aidPercentage = 0;
-    
-    // Merit-based considerations
-    if (student.gpa > university.averageGPA + 0.2) {
-      aidPercentage += 15;
-    } else if (student.gpa > university.averageGPA) {
-      aidPercentage += 10;
-    }
-    
-    // Test score considerations
-    if (student.schoolType === 'Undergraduate') {
-      if (student.satScore && university.medianSAT && student.satScore > university.medianSAT + 100) {
-        aidPercentage += 15;
-      } else if (student.actScore && university.medianACT && student.actScore > university.medianACT + 2) {
-        aidPercentage += 15;
-      }
-    }
-    
-    // Need-based considerations
-    if (student.demographics.lowIncome) {
-      aidPercentage += 25;
-    }
-    
-    if (student.demographics.firstGeneration) {
-      aidPercentage += 10;
-    }
-    
-    // Excellence in extras
-    if (student.awards >= 8) {
-      aidPercentage += 5;
-    }
-    
-    if (student.leadership >= 8) {
-      aidPercentage += 5;
-    }
-    
-    // Cap maximum aid at 90%
-    const finalAidPercentage = Math.min(90, aidPercentage);
-    
-    return Math.round((finalAidPercentage / 100) * baseTuition);
-  };
-  
-  // Generate personalized feedback
-  const generateFeedback = (
-    student: StudentProfile, 
-    university: University, 
-    chance: number
-  ): [string[], string[], string[]] => {
-    const comments: string[] = [];
-    const strengths: string[] = [];
-    const improvements: string[] = [];
-    
-    // General admission comment
-    if (chance >= 70) {
-      comments.push(`You have a strong chance of admission to ${university.name}.`);
-    } else if (chance >= 30) {
-      comments.push(`${university.name} is a solid target school based on your profile.`);
-    } else {
-      comments.push(`${university.name} would be a reach school given your current credentials.`);
-    }
-    
-    // Academic assessment
-    if (student.gpa >= university.averageGPA) {
-      strengths.push(`Your GPA of ${student.gpa} is at or above the university's average of ${university.averageGPA}.`);
-    } else if (student.gpa >= university.acceptedGPARange.min) {
-      comments.push(`Your GPA is within the acceptable range but below their average.`);
-    } else {
-      improvements.push(`Consider ways to strengthen your academic record to meet ${university.name}'s GPA expectations.`);
-    }
-    
-    // Test score assessment
-    if (student.schoolType === 'Undergraduate') {
-      if (student.satScore && university.medianSAT) {
-        if (student.satScore >= university.medianSAT) {
-          strengths.push(`Your SAT score of ${student.satScore} meets or exceeds their median of ${university.medianSAT}.`);
-        } else if (student.satScore >= university.acceptedSATRange?.min) {
-          comments.push(`Your SAT score is within their accepted range.`);
-        } else {
-          improvements.push(`Consider retaking the SAT to boost your score above ${university.acceptedSATRange?.min}.`);
-        }
-      } else if (student.actScore && university.medianACT) {
-        if (student.actScore >= university.medianACT) {
-          strengths.push(`Your ACT score of ${student.actScore} meets or exceeds their median of ${university.medianACT}.`);
-        } else if (student.actScore >= university.acceptedACTRange?.min) {
-          comments.push(`Your ACT score is within their accepted range.`);
-        } else {
-          improvements.push(`Consider retaking the ACT to boost your score above ${university.acceptedACTRange?.min}.`);
-        }
-      }
-    } else if (student.schoolType === 'MBA') {
-      if (student.gmatScore && university.medianGMAT) {
-        if (student.gmatScore >= university.medianGMAT) {
-          strengths.push(`Your GMAT score of ${student.gmatScore} meets or exceeds their median of ${university.medianGMAT}.`);
-        } else {
-          improvements.push(`Consider retaking the GMAT to boost your score closer to ${university.medianGMAT}.`);
-        }
-      } else if (student.greScore && university.medianGRE) {
-        if (student.greScore >= university.medianGRE) {
-          strengths.push(`Your GRE score of ${student.greScore} meets or exceeds their median of ${university.medianGRE}.`);
-        } else {
-          improvements.push(`Consider retaking the GRE to boost your score closer to ${university.medianGRE}.`);
-        }
-      }
-    } else if (student.schoolType === 'Graduate' && student.greScore && university.medianGRE) {
-      if (student.greScore >= university.medianGRE) {
-        strengths.push(`Your GRE score of ${student.greScore} meets or exceeds their median of ${university.medianGRE}.`);
-      } else {
-        improvements.push(`Consider retaking the GRE to boost your score closer to ${university.medianGRE}.`);
-      }
-    }
-    
-    // Extracurricular assessment based on university weights
-    const weights = university.weights;
-    
-    if (weights.extracurricularWeight > 0.2) {
-      if (student.extraCurricular >= 8) {
-        strengths.push(`Your strong extracurricular activities align well with ${university.name}'s holistic approach.`);
-      } else if (student.extraCurricular < 6) {
-        improvements.push(`${university.name} values extracurricular involvement highly. Consider deepening your activities.`);
-      }
-    }
-    
-    if (weights.essaysWeight > 0.15) {
-      if (student.essays < 7) {
-        improvements.push(`Strong essays are crucial for admission to ${university.name}. Invest time in crafting compelling essays.`);
-      }
-    }
-    
-    if (weights.recommendationsWeight > 0.1) {
-      if (student.recommendations < 7) {
-        improvements.push(`${university.name} values strong recommendations. Secure letters from those who know you well.`);
-      }
-    }
-    
-    if (weights.leadershipWeight > 0.05) {
-      if (student.leadership >= 8) {
-        strengths.push(`Your leadership experience is a strong asset for ${university.name}.`);
-      } else if (student.leadership < 6) {
-        improvements.push(`${university.name} values leadership. Seek out more leadership opportunities.`);
-      }
-    }
-    
-    // School-specific considerations
-    if (student.schoolType === 'MBA' && weights.workExperienceWeight && weights.workExperienceWeight > 0.05) {
-      if (!student.workExperience || student.workExperience < 2) {
-        improvements.push(`${university.name}'s MBA program typically prefers candidates with more work experience.`);
-      } else if (student.workExperience >= 4) {
-        strengths.push(`Your ${student.workExperience} years of work experience is valuable for ${university.name}'s MBA program.`);
-      }
-    }
-    
-    if (student.schoolType === 'Graduate' && weights.researchWeight && weights.researchWeight > 0.1) {
-      if (!student.research || student.research < 5) {
-        improvements.push(`${university.name} values research experience for graduate applicants. Consider strengthening this area.`);
-      } else if (student.research >= 7) {
-        strengths.push(`Your research experience aligns well with ${university.name}'s graduate program expectations.`);
-      }
-    }
-    
-    // International student considerations
-    if (student.international && weights.internationalWeight < 0.05) {
-      comments.push(`${university.name} has a competitive admissions process for international students.`);
-    }
-    
-    return [comments, strengths, improvements];
-  };
+  const UniversityDetails = ({ result }: { result: PredictionResult }) => (
+    <div className="mt-4 space-y-4">
+      <div className="grid grid-cols-2 gap-4 text-sm">
+        <div className="p-3 bg-purple-50 rounded-lg flex items-center">
+          <Users size={18} className="text-purple-600 mr-2" />
+          <div>
+            <p className="text-gray-600 text-xs">Acceptance Rate</p>
+            <p className="font-semibold text-purple-700">{result.university.acceptanceRate}%</p>
+          </div>
+        </div>
+        <div className="p-3 bg-rose-50 rounded-lg flex items-center">
+          <TrendingUp size={18} className="text-rose-600 mr-2" />
+          <div>
+            <p className="text-gray-600 text-xs">QS Ranking</p>
+            <p className="font-semibold text-rose-700">#{result.university.QSRanking}</p>
+          </div>
+        </div>
+        <div className="p-3 bg-purple-50 rounded-lg flex items-center">
+          <DollarSign size={18} className="text-purple-600 mr-2" />
+          <div>
+            <p className="text-gray-600 text-xs">Avg. Salary</p>
+            <p className="font-semibold text-purple-700">${result.university.averageSalary.toLocaleString()}</p>
+          </div>
+        </div>
+        <div className="p-3 bg-rose-50 rounded-lg flex items-center">
+          <Users size={18} className="text-rose-600 mr-2" />
+          <div>
+            <p className="text-gray-600 text-xs">Student-Faculty</p>
+            <p className="font-semibold text-rose-700">{result.university.studentFacultyRatio}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <div className="flex items-center">
+          <Star size={16} className="text-purple-600 mr-2" />
+          <h4 className="font-semibold text-purple-800">Strengths</h4>
+        </div>
+        <ul className="space-y-2">
+          {result.strengthsAnalysis.positive_points.map((point, index) => (
+            <li key={index} className="flex items-start text-gray-700">
+              <CheckCircle size={16} className="text-green-500 mt-1 mr-2 flex-shrink-0" />
+              <span>{point}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="space-y-3">
+        <div className="flex items-center">
+          <BarChart size={16} className="text-rose-600 mr-2" />
+          <h4 className="font-semibold text-rose-800">Improvement Areas</h4>
+        </div>
+        <ul className="space-y-2">
+          {result.strengthsAnalysis.improvement_areas.map((area, index) => (
+            <li key={index} className="flex items-start text-gray-700">
+              <AlertTriangle size={16} className="text-amber-500 mt-1 mr-2 flex-shrink-0" />
+              <span>{area}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="bg-gradient-to-r from-purple-50/80 to-rose-50/80 p-4 rounded-xl border border-purple-100">
+        <div className="flex items-center mb-2">
+          <BookOpen size={16} className="text-purple-600 mr-2" />
+          <h4 className="font-semibold text-gray-800">Counselor's Note</h4>
+        </div>
+        <p className="text-gray-600 italic">{result.counselorNote}</p>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="p-2 text-left">Component</th>
+              <th className="p-2 text-center">Your Value</th>
+              <th className="p-2 text-center">Ideal</th>
+              <th className="p-2 text-center">Weight</th>
+            </tr>
+          </thead>
+          <tbody>
+            {result.components.map((comp, index) => (
+              <tr key={index} className="border-b border-gray-100">
+                <td className="p-2 font-medium">{comp.name}</td>
+                <td className="p-2 text-center">{comp.rawValue}</td>
+                <td className="p-2 text-center">{comp.idealValue}</td>
+                <td className="p-2 text-center">{(comp.weight * 100).toFixed(0)}%</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
-        <header className="mb-10 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-blue-800 mb-2">
-            Global University Admission Predictor
-          </h1>
-          <p className="text-gray-600 max-w-3xl mx-auto">
-            Calculate your chances of admission to top universities worldwide based on your academic profile and 
-            extracurricular achievements.
-          </p>
-        </header>
-        
-        <Tab.Group selectedIndex={activeTab} onChange={setActiveTab}>
-          <Tab.List className="flex p-1 space-x-1 bg-white rounded-xl shadow mb-8">
-            {['Profile Setup', 'Results & Analysis'].map((category, idx) => (
-              <Tab
-                key={category}
-                className={({ selected }) =>
-                  `w-full py-3 text-sm font-medium rounded-lg transition-all
-                   ${selected 
-                     ? 'bg-blue-600 text-white shadow'
-                     : 'text-gray-600 hover:bg-gray-100'}`
-                }
-              >
-                {category}
-              </Tab>
-            ))}
-          </Tab.List>
-          
-          <Tab.Panels>
-            {/* Profile Setup Panel */}
-            <Tab.Panel>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Left Column - Basic Academic Info */}
-                <div className="bg-white rounded-xl shadow p-6">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                    <AcademicCapIcon className="h-6 w-6 mr-2 text-blue-600" />
-                    Academic Information
-                  </h2>
-                  
-                  <div className="mb-6">
-                    <label className="block text-gray-700 mb-2">School Type</label>
-                    <div className="flex flex-wrap gap-3">
-                      {['Undergraduate', 'MBA', 'Graduate'].map((type) => (
-                        <button
-                          key={type}
-                          type="button"
-                          className={`px-4 py-2 rounded-md ${
-                            schoolType === type
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                          }`}
-                          onClick={() => setSchoolType(type as SchoolType)}
-                        >
-                          {type}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <label htmlFor="gpa" className="block text-gray-700 mb-1">GPA (4.0 Scale)</label>
-                    <input
-                      type="number"
-                      id="gpa"
-                      name="gpa"
-                      min="0"
-                      max="4.0"
-                      step="0.01"
-                      value={studentProfile.gpa || ''}
-                      onChange={handleInputChange}
-                      className={`w-full p-2 border rounded-md ${
-                        validationErrors.gpa ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    />
-                    {validationErrors.gpa && (
-                      <p className="text-red-500 text-sm mt-1">{validationErrors.gpa}</p>
-                    )}
-                  </div>
-                  
-                  {schoolType === 'Undergraduate' && (
-                    <>
-                      <div className="mb-4">
-                        <label htmlFor="satScore" className="block text-gray-700 mb-1">SAT Score (400-1600)</label>
-                        <input
-                          type="number"
-                          id="satScore"
-                          name="satScore"
-                          min="400"
-                          max="1600"
-                          step="10"
-                          value={studentProfile.satScore || ''}
-                          onChange={handleInputChange}
-                          className={`w-full p-2 border rounded-md ${
-                            validationErrors.satScore ? 'border-red-500' : 'border-gray-300'
-                          }`}
-                        />
-                        {validationErrors.satScore && (
-                          <p className="text-red-500 text-sm mt-1">{validationErrors.satScore}</p>
-                        )}
-                      </div>
-                      
-                      <div className="mb-4">
-                        <label htmlFor="actScore" className="block text-gray-700 mb-1">ACT Score (1-36)</label>
-                        <input
-                          type="number"
-                          id="actScore"
-                          name="actScore"
-                          min="1"
-                          max="36"
-                          step="1"
-                          value={studentProfile.actScore || ''}
-                          onChange={handleInputChange}
-                          className={`w-full p-2 border rounded-md ${
-                            validationErrors.actScore ? 'border-red-500' : 'border-gray-300'
-                          }`}
-                        />
-                        {validationErrors.actScore && (
-                          <p className="text-red-500 text-sm mt-1">{validationErrors.actScore}</p>
-                        )}
-                      </div>
-                    </>
-                  )}
-                  
-                  {schoolType === 'MBA' && (
-                    <>
-                      <div className="mb-4">
-                        <label htmlFor="gmatScore" className="block text-gray-700 mb-1">GMAT Score (200-800)</label>
-                        <input
-                          type="number"
-                          id="gmatScore"
-                          name="gmatScore"
-                          min="200"
-                          max="800"
-                          step="10"
-                          value={studentProfile.gmatScore || ''}
-                          onChange={handleInputChange}
-                          className={`w-full p-2 border rounded-md ${
-                            validationErrors.gmatScore ? 'border-red-500' : 'border-gray-300'
-                          }`}
-                        />
-                        {validationErrors.gmatScore && (
-                          <p className="text-red-500 text-sm mt-1">{validationErrors.gmatScore}</p>
-                        )}
-                      </div>
-                      
-                      <div className="mb-4">
-                        <label htmlFor="greScore" className="block text-gray-700 mb-1">GRE Score (260-340)</label>
-                        <input
-                          type="number"
-                          id="greScore"
-                          name="greScore"
-                          min="260"
-                          max="340"
-                          step="1"
-                          value={studentProfile.greScore || ''}
-                          onChange={handleInputChange}
-                          className={`w-full p-2 border rounded-md ${
-                            validationErrors.greScore ? 'border-red-500' : 'border-gray-300'
-                          }`}
-                        />
-                        {validationErrors.greScore && (
-                          <p className="text-red-500 text-sm mt-1">{validationErrors.greScore}</p>
-                        )}
-                      </div>
-                      
-                      <div className="mb-4">
-                        <label htmlFor="workExperience" className="block text-gray-700 mb-1">
-                          Work Experience (Years)
-                        </label>
-                        <input
-                          type="number"
-                          id="workExperience"
-                          name="workExperience"
-                          min="0"
-                          max="30"
-                          step="0.5"
-                          value={studentProfile.workExperience || ''}
-                          onChange={handleInputChange}
-                          className={`w-full p-2 border rounded-md ${
-                            validationErrors.workExperience ? 'border-red-500' : 'border-gray-300'
-                          }`}
-                        />
-                        {validationErrors.workExperience && (
-                          <p className="text-red-500 text-sm mt-1">{validationErrors.workExperience}</p>
-                        )}
-                      </div>
-                    </>
-                  )}
-                  
-                  {schoolType === 'Graduate' && (
-                    <>
-                      <div className="mb-4">
-                        <label htmlFor="greScore" className="block text-gray-700 mb-1">GRE Score (260-340)</label>
-                        <input
-                          type="number"
-                          id="greScore"
-                          name="greScore"
-                          min="260"
-                          max="340"
-                          step="1"
-                          value={studentProfile.greScore || ''}
-                          onChange={handleInputChange}
-                          className={`w-full p-2 border rounded-md ${
-                            validationErrors.greScore ? 'border-red-500' : 'border-gray-300'
-                          }`}
-                        />
-                        {validationErrors.greScore && (
-                          <p className="text-red-500 text-sm mt-1">{validationErrors.greScore}</p>
-                        )}
-                      </div>
-                      
-                      <div className="mb-4">
-                        <label htmlFor="research" className="block text-gray-700 mb-1">
-                          Research Experience (0-10)
-                        </label>
-                        <input
-                          type="number"
-                          id="research"
-                          name="research"
-                          min="0"
-                          max="10"
-                          step="1"
-                          value={studentProfile.research || ''}
-                          onChange={handleInputChange}
-                          className={`w-full p-2 border rounded-md ${
-                            validationErrors.research ? 'border-red-500' : 'border-gray-300'
-                          }`}
-                        />
-                        {validationErrors.research && (
-                          <p className="text-red-500 text-sm mt-1">{validationErrors.research}</p>
-                        )}
-                      </div>
-                      
-                      <div className="mb-4">
-                        <label htmlFor="workExperience" className="block text-gray-700 mb-1">
-                          Work Experience (Years)
-                        </label>
-                        <input
-                          type="number"
-                          id="workExperience"
-                          name="workExperience"
-                          min="0"
-                          max="30"
-                          step="0.5"
-                          value={studentProfile.workExperience || ''}
-                          onChange={handleInputChange}
-                          className="w-full p-2 border border-gray-300 rounded-md"
-                        />
-                      </div>
-                    </>
-                  )}
-                </div>
-                
-                {/* Middle Column - Extracurricular & Personal Factors */}
-                <div className="bg-white rounded-xl shadow p-6">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                    <BookOpenIcon className="h-6 w-6 mr-2 text-blue-600" />
-                    Profile Factors
-                  </h2>
-                  
-                  <div className="mb-4">
-                    <label htmlFor="extraCurricular" className="block text-gray-700 mb-1">
-                      Extracurricular Activities (0-10)
-                    </label>
-                    <input
-                      type="range"
-                      id="extraCurricular"
-                      name="extraCurricular"
-                      min="0"
-                      max="10"
-                      step="1"
-                      value={studentProfile.extraCurricular}
-                      onChange={handleInputChange}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Limited</span>
-                      <span>{studentProfile.extraCurricular}</span>
-                      <span>Exceptional</span>
-                    </div>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <label htmlFor="essays" className="block text-gray-700 mb-1">
-                      Essays Quality (0-10)
-                    </label>
-                    <input
-                      type="range"
-                      id="essays"
-                      name="essays"
-                      min="0"
-                      max="10"
-                      step="1"
-                      value={studentProfile.essays}
-                      onChange={handleInputChange}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Basic</span>
-                      <span>{studentProfile.essays}</span>
-                      <span>Outstanding</span>
-                    </div>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <label htmlFor="recommendations" className="block text-gray-700 mb-1">
-                      Letters of Recommendation (0-10)
-                    </label>
-                    <input
-                      type="range"
-                      id="recommendations"
-                      name="recommendations"
-                      min="0"
-                      max="10"
-                      step="1"
-                      value={studentProfile.recommendations}
-                      onChange={handleInputChange}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Generic</span>
-                      <span>{studentProfile.recommendations}</span>
-                      <span>Compelling</span>
-                    </div>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <label htmlFor="leadership" className="block text-gray-700 mb-1">
-                      Leadership Experience (0-10)
-                    </label>
-                    <input
-                      type="range"
-                      id="leadership"
-                      name="leadership"
-                      min="0"
-                      max="10"
-                      step="1"
-                      value={studentProfile.leadership}
-                      onChange={handleInputChange}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>None</span>
-                      <span>{studentProfile.leadership}</span>
-                      <span>Significant</span>
-                    </div>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <label htmlFor="awards" className="block text-gray-700 mb-1">
-                      Awards & Honors (0-10)
-                    </label>
-                    <input
-                      type="range"
-                      id="awards"
-                      name="awards"
-                      min="0"
-                      max="10"
-                      step="1"
-                      value={studentProfile.awards}
-                      onChange={handleInputChange}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>None</span>
-                      <span>{studentProfile.awards}</span>
-                      <span>National/International</span>
-                    </div>
-                  </div>
-                  
-                  <div className="mb-6">
-                    <label htmlFor="communityService" className="block text-gray-700 mb-1">
-                      Community Service (0-10)
-                    </label>
-                    <input
-                      type="range"
-                      id="communityService"
-                      name="communityService"
-                      min="0"
-                      max="10"
-                      step="1"
-                      value={studentProfile.communityService}
-                      onChange={handleInputChange}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>Limited</span>
-                      <span>{studentProfile.communityService}</span>
-                      <span>Extensive</span>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4 space-y-3">
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="international"
-                        name="international"
-                        checked={studentProfile.international}
-                        onChange={handleInputChange}
-                        className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-                      />
-                      <label htmlFor="international" className="ml-2 text-gray-700">
-                        International Student
-                      </label>
-                    </div>
-                    
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="legacy"
-                        name="legacy"
-                        checked={studentProfile.legacy}
-                        onChange={handleInputChange}
-                        className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-                      />
-                      <label htmlFor="legacy" className="ml-2 text-gray-700">
-                        Legacy Connection
-                      </label>
-                    </div>
-                    
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="demographics.firstGeneration"
-                        name="demographics.firstGeneration"
-                        checked={studentProfile.demographics.firstGeneration}
-                        onChange={handleInputChange}
-                        className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-                      />
-                      <label htmlFor="demographics.firstGeneration" className="ml-2 text-gray-700">
-                        First Generation College Student
-                      </label>
-                    </div>
-                    
-                    <div className="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="demographics.lowIncome"
-                        name="demographics.lowIncome"
-                        checked={studentProfile.demographics.lowIncome}
-                        onChange={handleInputChange}
-                        className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-                      />
-                      <label htmlFor="demographics.lowIncome" className="ml-2 text-gray-700">
-                        Low Income Background
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Right Column - Region Selection & Controls */}
-                <div className="bg-white rounded-xl shadow p-6">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                    <GlobeIcon className="h-6 w-6 mr-2 text-blue-600" />
-                    University Regions
-                  </h2>
-                  
-                  <div className="mb-6">
-                    <p className="text-gray-600 mb-3">Select regions to include in your results:</p>
-                    
-                    <div className="grid grid-cols-2 gap-2">
-                      {(['US', 'UK', 'Europe', 'Asia', 'Australia', 'Canada'] as Region[]).map((region) => (
-                        <button
-                          key={region}
-                          type="button"
-                          onClick={() => toggleRegionFilter(region)}
-                          className={`flex items-center justify-center p-2 text-sm rounded-lg transition-all ${
-                            regionFilters.includes(region)
-                              ? 'bg-blue-100 text-blue-700 font-semibold'
-                              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                          }`}
-                        >
-                          {region}
-                          <ChevronDownIcon className={`w-4 h-4 ml-1 transform transition-transform ${
-                            regionFilters.includes(region) ? 'rotate-180' : ''
-                          }`} />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
 
-                  <div className="mt-8 space-y-4">
+      <div className="flex justify-center gap-4 mb-8">
+        <button
+          onClick={() => handleProgramChange('undergraduate')}
+          className={`flex items-center px-5 py-2.5 rounded-lg transition-all ${
+            programType === 'undergraduate'
+              ? 'bg-gradient-to-r from-rose-600 to-rose-700 text-white font-bold shadow-md'
+              : 'bg-white text-gray-700 border border-gray-200 hover:border-purple-300'
+          }`}
+        >
+          <GraduationCap size={18} className={programType === 'undergraduate' ? 'text-white mr-2' : 'text-purple-600 mr-2'} />
+          Undergraduate
+        </button>
+        <button
+          onClick={() => handleProgramChange('mba')}
+          className={`flex items-center px-5 py-2.5 rounded-lg transition-all ${
+            programType === 'mba'
+              ? 'bg-gradient-to-r from-rose-600 to-rose-700 text-white shadow-md font-bold'
+              : 'bg-white text-gray-700 border border-gray-200 hover:border-rose-300'
+          }`}
+        >
+          <Briefcase size={18} className={programType === 'mba' ? 'text-white mr-2' : 'text-rose-600 mr-2'} />
+          MBA
+        </button>
+      </div>
+
+      <div className="bg-white shadow-xl rounded-2xl overflow-hidden">
+        <div className="flex border-b">
+          <button
+            onClick={() => setActiveTab('profile')}
+            className={`flex-1 py-4 text-center font-semibold transition-colors ${
+              activeTab === 'profile'
+                ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 border-b-2 border-purple-600'
+                : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            Application Profile
+          </button>
+          <button
+            onClick={() => setActiveTab('results')}
+            className={`flex-1 py-4 text-center font-semibold transition-colors ${
+              activeTab === 'results'
+                ? 'bg-gradient-to-r from-rose-50 to-rose-100 text-rose-700 border-b-2 border-rose-600'
+                : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            Results
+          </button>
+        </div>
+
+        <div className="p-4 md:p-6">
+          {activeTab === 'profile' && (
+            <>
+              {renderStepIndicator()}
+              
+              {step === 1 && (
+                <form onSubmit={(e) => { e.preventDefault(); setStep(2); }} className="space-y-6 max-w-3xl mx-auto">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">GPA</label>
+                        <div className="relative">
+                          <input
+                            type="number"
+                            min="0"
+                            max="4.0"
+                            step="0.1"
+                            value={gpa}
+                            onChange={(e) => setGpa(parseFloat(e.target.value))}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 pl-10"
+                          />
+                          <GraduationCap size={18} className="absolute left-3 top-3.5 text-purple-500" />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          {programType === 'undergraduate' ? 'SAT Score' : 'GMAT Score'}
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="number"
+                            min={programType === 'undergraduate' ? 400 : 200}
+                            max={programType === 'undergraduate' ? 1600 : 800}
+                            value={testScore}
+                            onChange={(e) => setTestScore(Number(e.target.value))}
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 pl-10"
+                          />
+                          <BookOpen size={18} className="absolute left-3 top-3.5 text-purple-500" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Essay Strength</label>
+                        <div className="flex gap-2">
+                          {[1, 2, 3, 4, 5].map((level) => (
+                            <button
+                              key={level}
+                              type="button"
+                              onClick={() => setEssaysStrength(level as StrengthLevel)}
+                              className={`flex-1 py-2 rounded-md transition-colors ${
+                                essaysStrength === level
+                                  ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white'
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              }`}
+                            >
+                              {level}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Recommendation Strength</label>
+                        <div className="flex gap-2">
+                          {[1, 2, 3, 4, 5].map((level) => (
+                            <button
+                              key={level}
+                              type="button"
+                              onClick={() => setRecommendationStrength(level as StrengthLevel)}
+                              className={`flex-1 py-2 rounded-md transition-colors ${
+                                recommendationStrength === level
+                                  ? 'bg-gradient-to-r from-rose-500 to-rose-600 text-white'
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                              }`}
+                            >
+                              {level}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-end">
                     <button
-                      onClick={calculateAdmissionChances}
-                      disabled={isCalculating}
-                      className={`w-full py-3 px-6 flex items-center justify-center rounded-lg font-medium text-white transition-all ${
-                        isCalculating
-                          ? 'bg-blue-400 cursor-not-allowed'
-                          : 'bg-blue-600 hover:bg-blue-700'
-                      }`}
+                      type="submit"
+                      className="px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:shadow-lg transition-all flex items-center"
                     >
-                      {isCalculating ? (
-                        <>
-                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          Calculating...
-                        </>
-                      ) : (
-                        'Calculate Admission Chances'
-                      )}
+                      Continue <ChevronRight size={16} className="ml-1" />
                     </button>
+                  </div>
+                </form>
+              )}
 
-                    <div className="text-sm text-gray-500 flex items-start">
-                      <InformationCircleIcon className="w-4 h-4 mr-2 mt-0.5 text-gray-400" />
-                      <span>
-                        Our algorithm considers over 50 factors including university-specific weights,
-                        historical data, and holistic admission criteria.
-                      </span>
+              {step === 2 && (
+                <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl mx-auto">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Leadership Roles</label>
+                      <div className="relative">
+                        <input
+                          type="number"
+                          min="0"
+                          value={leadershipRoles}
+                          onChange={(e) => setLeadershipRoles(Number(e.target.value))}
+                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 pl-10"
+                        />
+                        <Users size={18} className="absolute left-3 top-3.5 text-purple-500" />
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <label className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          checked={researchExperience}
+                          onChange={(e) => setResearchExperience(e.target.checked)}
+                          className="h-5 w-5 text-rose-600 rounded border-gray-300"
+                        />
+                        <span className="text-sm text-gray-700">Research Experience</span>
+                      </label>
                     </div>
                   </div>
-                </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                      <BookOpen size={16} className="mr-2 text-purple-600" />
+                      Extracurricular Activities
+                    </label>
+                    <div className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={newExtracurricular}
+                        onChange={(e) => setNewExtracurricular(e.target.value)}
+                        placeholder="Add activity"
+                        className="flex-1 p-3 border border-gray-300 rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddExtracurricular}
+                        disabled={extracurriculars.length >= 10}
+                        className="px-4 py-3 bg-purple-600 text-white rounded-lg disabled:bg-gray-400 hover:bg-purple-700 transition-colors"
+                      >
+                        Add
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {extracurriculars.map((activity, index) => (
+                        <div key={index} className="flex items-center justify-between p-2 bg-purple-50 rounded-lg border border-purple-100">
+                          <span className="text-sm text-gray-700">{activity}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveExtracurricular(index)}
+                            className="text-rose-600 hover:text-rose-700 p-1 hover:bg-rose-100 rounded-full transition-colors"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                      <Award size={16} className="mr-2 text-rose-600" />
+                      Awards & Honors
+                    </label>
+                    <div className="flex gap-2 mb-2">
+                      <input
+                        type="text"
+                        value={newAward}
+                        onChange={(e) => setNewAward(e.target.value)}
+                        placeholder="Add award"
+                        className="flex-1 p-3 border border-gray-300 rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddAward}
+                        disabled={awards.length >= 5}
+                        className="px-4 py-3 bg-rose-600 text-white rounded-lg disabled:bg-gray-400 hover:bg-rose-700 transition-colors"
+                      >
+                        Add
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {awards.map((award, index) => (
+                        <div key={index} className="flex items-center justify-between p-2 bg-rose-50 rounded-lg border border-rose-100">
+                          <span className="text-sm text-gray-700">{award}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveAward(index)}
+                            className="text-rose-600 hover:text-rose-700 p-1 hover:bg-rose-100 rounded-full transition-colors"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <button
+                      type="button"
+                      onClick={() => setStep(1)}
+                      className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors flex items-center"
+                    >
+                      <ChevronRight size={16} className="mr-1 transform rotate-180" /> Back
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-8 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:shadow-lg transition-all flex items-center"
+                    >
+                      Get Predictions <ChevronRight size={16} className="ml-1" />
+                    </button>
+                  </div>
+                </form>
+              )}
+            </>
+          )}
+
+          {activeTab === 'results' && (
+            <div className="space-y-8">
+              <div className="bg-gradient-to-r from-purple-600 to-rose-600 text-white p-6 rounded-2xl shadow-lg">
+                <h2 className="text-2xl font-bold mb-2 flex items-center">
+                  <Medal size={20} className="mr-2" /> Admission Predictions
+                </h2>
+                <p className="opacity-90">Based on analysis of 50,000+ historical applications</p>
               </div>
-            </Tab.Panel>
 
-            {/* Results & Analysis Panel */}
-            <Tab.Panel>
-              {results.length === 0 ? (
-                <div className="text-center py-12 bg-white rounded-xl shadow">
-                  <p className="text-gray-500">Submit your profile to see admission predictions</p>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div className="bg-white p-4 rounded-xl shadow">
-                      <h3 className="text-sm font-medium text-gray-500 mb-1">Average Chance</h3>
-                      <p className="text-2xl font-bold text-blue-600">
-                        {Math.round(results.reduce((sum, res) => sum + res.chance, 0) / results.length)}%
-                      </p>
-                    </div>
-                    <div className="bg-white p-4 rounded-xl shadow">
-                      <h3 className="text-sm font-medium text-gray-500 mb-1">Safety Schools</h3>
-                      <p className="text-2xl font-bold text-green-600">
-                        {results.filter(res => res.status === 'Safety').length}
-                      </p>
-                    </div>
-                    <div className="bg-white p-4 rounded-xl shadow">
-                      <h3 className="text-sm font-medium text-gray-500 mb-1">Estimated Average Aid</h3>
-                      <p className="text-2xl font-bold text-purple-600">
-                        ${Math.round(results.reduce((sum, res) => sum + res.financialAid, 0) / results.length)}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    {results.map((result, idx) => (
-                      <div key={result.university.id} className="bg-white rounded-xl shadow p-6">
-                        <div className="flex items-start justify-between mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {results.map((result) => {
+                  const chanceStyle = getAdmissionChanceColor(result.admissionProbability);
+                  return (
+                    <div 
+                      key={result.university.id} 
+                      className="bg-white overflow-hidden rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100"
+                    >
+                      <div className="p-4">
+                        <div className="flex justify-between items-start">
                           <div>
-                            <h3 className="text-xl font-semibold">{result.university.name}</h3>
-                            <p className="text-gray-500">{result.university.region}</p>
-                          </div>
-                          <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                            result.status === 'Safety' ? 'bg-green-100 text-green-700' :
-                            result.status === 'Target' ? 'bg-yellow-100 text-yellow-700' :
-                            'bg-red-100 text-red-700'
-                          }`}>
-                            {result.status}
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                          <div>
-                            <label className="text-sm text-gray-500">Admission Chance</label>
-                            <div className="flex items-center">
-                              <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2">
-                                <div
-                                  className="bg-blue-600 h-2.5 rounded-full"
-                                  style={{ width: `${result.chance}%` }}
-                                />
-                              </div>
-                              <span className="font-medium">{result.chance}%</span>
+                            <h3 className="text-lg font-bold text-gray-900">{result.university.name}</h3>
+                            <div className="flex items-center mt-1">
+                              <span className={`text-xs px-2 py-1 rounded-full flex items-center ${chanceStyle.bg} ${chanceStyle.text}`}>
+                                {chanceStyle.icon}
+                                <span className="ml-1">
+                                  {result.admissionProbability >= 75 ? 'High Chance' : 
+                                  result.admissionProbability >= 50 ? 'Moderate' : 'Reach'}
+                                </span>
+                              </span>
                             </div>
                           </div>
-                          <div>
-                            <label className="text-sm text-gray-500">Fit Score</label>
-                            <div className="flex items-center">
-                              <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2">
-                                <div
-                                  className="bg-purple-600 h-2.5 rounded-full"
-                                  style={{ width: `${result.fitScore}%` }}
-                                />
-                              </div>
-                              <span className="font-medium">{result.fitScore}/100</span>
-                            </div>
-                          </div>
-                          <div>
-                            <label className="text-sm text-gray-500">Estimated Annual Cost</label>
-                            <p className="font-medium">
-                              ${(result.university.tuition.international - result.financialAid).toLocaleString()}
-                            </p>
+                          <div 
+                            className={`text-xl font-bold ${
+                              result.admissionProbability >= 80 ? 'text-emerald-600' : 
+                              result.admissionProbability >= 50 ? 'text-amber-500' : 'text-rose-600'
+                            }`}
+                          >
+                            {result.chanceOfAdmission}
                           </div>
                         </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div>
-                            <h4 className="text-sm font-medium text-gray-700 mb-2">Strengths</h4>
-                            <ul className="list-disc pl-5 space-y-1">
-                              {result.strengths.map((strength, i) => (
-                                <li key={i} className="text-sm text-green-700">{strength}</li>
-                              ))}
-                            </ul>
+                        
+                        <div className="mt-4 flex flex-wrap gap-3">
+                          <div className="flex items-center text-xs text-gray-600">
+                            <Users size={14} className="mr-1" />
+                            <span>{result.university.acceptanceRate}% accept</span>
                           </div>
-                          <div>
-                            <h4 className="text-sm font-medium text-gray-700 mb-2">Areas to Improve</h4>
-                            <ul className="list-disc pl-5 space-y-1">
-                              {result.improvements.map((improvement, i) => (
-                                <li key={i} className="text-sm text-red-700">{improvement}</li>
-                              ))}
-                            </ul>
+                          <div className="flex items-center text-xs text-gray-600">
+                            <TrendingUp size={14} className="mr-1" />
+                            <span>#{result.university.QSRanking}</span>
                           </div>
-                          <div>
-                            <h4 className="text-sm font-medium text-gray-700 mb-2">Advisor Notes</h4>
-                            <ul className="list-disc pl-5 space-y-1">
-                              {result.comments.map((comment, i) => (
-                                <li key={i} className="text-sm text-gray-600">{comment}</li>
-                              ))}
-                            </ul>
+                        </div>
+                        
+                        <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center">
+                          <button
+                            onClick={() => isMobile 
+                              ? setExpandedUniversity(prev => 
+                                  prev === result.university.id ? null : result.university.id)
+                              : setSelectedUniversity(result)}
+                            className={`text-sm flex items-center ${
+                              result.admissionProbability >= 80 ? 'text-emerald-600 hover:text-emerald-700' : 
+                              result.admissionProbability >= 50 ? 'text-amber-600 hover:text-amber-700' : 
+                              'text-purple-600 hover:text-purple-700'
+                            }`}
+                          >
+                            {isMobile 
+                              ? expandedUniversity === result.university.id 
+                                ? <>Hide Details <ChevronUp size={14} className="ml-1" /></>
+                                : <>View Details <ChevronDown size={14} className="ml-1" /></>
+                              : <>View Analysis <ChevronRight size={14} className="ml-1" /></>
+                            }
+                          </button>
+                          
+                          <div className="text-xs text-gray-500 flex items-center">
+                            <DollarSign size={14} className="mr-1" />
+                            {(result.university.averageSalary / 1000).toFixed(0)}K
                           </div>
                         </div>
                       </div>
-                    ))}
+
+                      {isMobile && expandedUniversity === result.university.id && (
+                        <div className="px-4 pb-4 border-t border-gray-100 pt-4 bg-gray-50">
+                          <UniversityDetails result={result} />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {!isMobile && selectedUniversity && (
+                <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 transition-opacity">
+                  <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
+                    <div className="sticky top-0 bg-white p-4 border-b flex justify-between items-center z-10">
+                      <div>
+                        <h3 className="text-xl font-bold">{selectedUniversity.university.name}</h3>
+                        <div className={`text-sm ${
+                          selectedUniversity.admissionProbability >= 75 ? 'text-emerald-600' : 
+                          selectedUniversity.admissionProbability >= 50 ? 'text-amber-600' : 'text-rose-600'
+                        }`}>
+                          {selectedUniversity.chanceOfAdmission} chance of admission
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => setSelectedUniversity(null)}
+                        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                      >
+                        <X size={20} className="text-gray-600" />
+                      </button>
+                    </div>
+                    <div className="p-6">
+                      <UniversityDetails result={selectedUniversity} />
+                    </div>
+                    <div className="bg-gray-50 p-4 border-t flex justify-end">
+                      <button
+                        onClick={() => setSelectedUniversity(null)}
+                        className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors text-gray-800"
+                      >
+                        Close
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
-            </Tab.Panel>
-          </Tab.Panels>
-        </Tab.Group>
+
+              <div className="flex justify-center">
+                <button
+                  onClick={handleReset}
+                  className="px-8 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center"
+                >
+                  Start Over
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-export default GlobalUniversityAdmissionPredictor;
+export default AdmissionsPredictor;

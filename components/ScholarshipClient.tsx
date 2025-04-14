@@ -13,69 +13,67 @@ type Scholarship = {
 };
 
 const countryColors = {
-    usa: 'border-purple-200',
-    uk: 'border-purple-200',
-    canada: 'border-purple-200',
-    australia: 'border-purple-200'
-  };
-  
-  const typeColors = {
-    undergraduate: 'bg-rose-100 text-rose-800',
-    postgraduate: 'bg-purple-100 text-purple-800'
-  };
+  usa: 'border-purple-200',
+  uk: 'border-purple-200',
+  canada: 'border-purple-200',
+  australia: 'border-purple-200'
+};
 
-  const scholarships: Record<Country, Record<ScholarshipType, Scholarship[]>> = {
-    usa: {
-      undergraduate: [
-        { title: 'USA Undergraduate Excellence Scholarship', amount: '$20,000/yr', deadline: '2025-09-15', eligibility: 'High school graduates with 3.8+ GPA', type: 'undergraduate' },
-        { title: 'STEM Leaders Scholarship', amount: 'Full Tuition', deadline: '2025-10-30', eligibility: 'Engineering/CS applicants with research experience', type: 'undergraduate' },
-        { title: 'Global Citizen Award', amount: '$15,000', deadline: '2025-08-01', eligibility: 'Community service leaders', type: 'undergraduate' }
-      ],
-      postgraduate: [
-        { title: 'Ivy League Research Fellowship', amount: '$45,000', deadline: '2025-11-15', eligibility: 'PhD candidates in STEM fields', type: 'postgraduate' },
-        { title: 'MBA Leadership Grant', amount: '$35,000', deadline: '2025-12-01', eligibility: '3+ years work experience', type: 'postgraduate' },
-        { title: 'US Academic Excellence Scholarship', amount: 'Full Ride', deadline: '2025-10-01', eligibility: 'First-class degree holders', type: 'postgraduate' }
-      ]
-    },
-    uk: {
-      undergraduate: [
-        { title: 'UK Undergraduate Merit Scholarship', amount: '£10,000', deadline: '2025-07-31', eligibility: 'AAA in A-levels', type: 'undergraduate' },
-        { title: 'International Baccalaureate Award', amount: '£15,000', deadline: '2025-08-15', eligibility: 'IB Diploma holders', type: 'undergraduate' },
-        { title: 'Creative Arts Scholarship', amount: '£8,000', deadline: '2025-09-30', eligibility: 'Portfolio-based selection', type: 'undergraduate' }
-      ],
-      postgraduate: [
-        { title: 'Chevening Research Scholarship', amount: 'Full Coverage', deadline: '2025-11-07', eligibility: 'Future leadership potential', type: 'postgraduate' },
-        { title: 'Oxbridge Doctoral Fellowship', amount: '£28,000/yr', deadline: '2025-12-01', eligibility: 'Research proposal required', type: 'postgraduate' },
-        { title: 'London Business School Grant', amount: '£25,000', deadline: '2025-10-15', eligibility: 'GMAT 700+', type: 'postgraduate' }
-      ]
-    },
-    canada: {
-      undergraduate: [
-        { title: 'Canadian First Year Excellence Award', amount: 'CAD 15,000', deadline: '2025-08-20', eligibility: '90%+ in Grade 12', type: 'undergraduate' },
-        { title: 'Maple Leaf Diversity Scholarship', amount: 'CAD 10,000', deadline: '2025-07-15', eligibility: 'Underrepresented communities', type: 'undergraduate' },
-        { title: 'Northern Lights Scholarship', amount: 'CAD 12,000', deadline: '2025-09-01', eligibility: 'Arctic region residents', type: 'undergraduate' }
-      ],
-      postgraduate: [
-        { title: 'Vanier Canada Graduate Scholarship', amount: 'CAD 50,000/yr', deadline: '2025-10-31', eligibility: 'PhD in health/engineering', type: 'postgraduate' },
-        { title: 'Pierre Elliott Trudeau Fellowship', amount: 'CAD 60,000', deadline: '2025-12-01', eligibility: 'Social sciences focus', type: 'postgraduate' },
-        { title: 'U15 Research Excellence Award', amount: 'Full Funding', deadline: '2025-11-30', eligibility: 'Masters/PhD in research universities', type: 'postgraduate' }
-      ]
-    },
-    australia: {
-      undergraduate: [
-        { title: 'Australia UG Excellence Scholarship', amount: 'AUD 20,000', deadline: '2025-07-30', eligibility: 'ATAR 90+', type: 'undergraduate' },
-        { title: 'Outback Scholarship Program', amount: 'AUD 15,000', deadline: '2025-08-15', eligibility: 'Regional area students', type: 'undergraduate' },
-        { title: 'Sydney Scholars Award', amount: 'AUD 10,000', deadline: '2025-09-01', eligibility: 'All undergraduate programs', type: 'undergraduate' }
-      ],
-      postgraduate: [
-        { title: 'Endeavour Research Fellowship', amount: 'AUD 272,500', deadline: '2025-06-30', eligibility: 'Postdoctoral researchers', type: 'postgraduate' },
-        { title: 'Melbourne Research Scholarship', amount: 'Full Tuition', deadline: '2025-10-31', eligibility: 'PhD candidates', type: 'postgraduate' },
-        { title: 'Australia Global Alumni Grant', amount: 'AUD 50,000', deadline: '2025-11-15', eligibility: 'Previous Australia graduates', type: 'postgraduate' }
-      ]
-    }
-  };
+const typeColors = {
+  undergraduate: 'bg-rose-100 text-rose-800',
+  postgraduate: 'bg-purple-100 text-purple-800'
+};
 
-
+const scholarships: Record<Country, Record<ScholarshipType, Scholarship[]>> = {
+  usa: {
+    undergraduate: [
+      { title: 'USA Undergraduate Excellence Scholarship', amount: '$20,000/yr', deadline: '2025-09-15', eligibility: 'High school graduates with 3.8+ GPA', type: 'undergraduate' },
+      { title: 'STEM Leaders Scholarship', amount: 'Full Tuition', deadline: '2025-10-30', eligibility: 'Engineering/CS applicants with research experience', type: 'undergraduate' },
+      { title: 'Global Citizen Award', amount: '$15,000', deadline: '2025-08-01', eligibility: 'Community service leaders', type: 'undergraduate' }
+    ],
+    postgraduate: [
+      { title: 'Ivy League Research Fellowship', amount: '$45,000', deadline: '2025-11-15', eligibility: 'PhD candidates in STEM fields', type: 'postgraduate' },
+      { title: 'MBA Leadership Grant', amount: '$35,000', deadline: '2025-12-01', eligibility: '3+ years work experience', type: 'postgraduate' },
+      { title: 'US Academic Excellence Scholarship', amount: 'Full Ride', deadline: '2025-10-01', eligibility: 'First-class degree holders', type: 'postgraduate' }
+    ]
+  },
+  uk: {
+    undergraduate: [
+      { title: 'UK Undergraduate Merit Scholarship', amount: '£10,000', deadline: '2025-07-31', eligibility: 'AAA in A-levels', type: 'undergraduate' },
+      { title: 'International Baccalaureate Award', amount: '£15,000', deadline: '2025-08-15', eligibility: 'IB Diploma holders', type: 'undergraduate' },
+      { title: 'Creative Arts Scholarship', amount: '£8,000', deadline: '2025-09-30', eligibility: 'Portfolio-based selection', type: 'undergraduate' }
+    ],
+    postgraduate: [
+      { title: 'Chevening Research Scholarship', amount: 'Full Coverage', deadline: '2025-11-07', eligibility: 'Future leadership potential', type: 'postgraduate' },
+      { title: 'Oxbridge Doctoral Fellowship', amount: '£28,000/yr', deadline: '2025-12-01', eligibility: 'Research proposal required', type: 'postgraduate' },
+      { title: 'London Business School Grant', amount: '£25,000', deadline: '2025-10-15', eligibility: 'GMAT 700+', type: 'postgraduate' }
+    ]
+  },
+  canada: {
+    undergraduate: [
+      { title: 'Canadian First Year Excellence Award', amount: 'CAD 15,000', deadline: '2025-08-20', eligibility: '90%+ in Grade 12', type: 'undergraduate' },
+      { title: 'Maple Leaf Diversity Scholarship', amount: 'CAD 10,000', deadline: '2025-07-15', eligibility: 'Underrepresented communities', type: 'undergraduate' },
+      { title: 'Northern Lights Scholarship', amount: 'CAD 12,000', deadline: '2025-09-01', eligibility: 'Arctic region residents', type: 'undergraduate' }
+    ],
+    postgraduate: [
+      { title: 'Vanier Canada Graduate Scholarship', amount: 'CAD 50,000/yr', deadline: '2025-10-31', eligibility: 'PhD in health/engineering', type: 'postgraduate' },
+      { title: 'Pierre Elliott Trudeau Fellowship', amount: 'CAD 60,000', deadline: '2025-12-01', eligibility: 'Social sciences focus', type: 'postgraduate' },
+      { title: 'U15 Research Excellence Award', amount: 'Full Funding', deadline: '2025-11-30', eligibility: 'Masters/PhD in research universities', type: 'postgraduate' }
+    ]
+  },
+  australia: {
+    undergraduate: [
+      { title: 'Australia UG Excellence Scholarship', amount: 'AUD 20,000', deadline: '2025-07-30', eligibility: 'ATAR 90+', type: 'undergraduate' },
+      { title: 'Outback Scholarship Program', amount: 'AUD 15,000', deadline: '2025-08-15', eligibility: 'Regional area students', type: 'undergraduate' },
+      { title: 'Sydney Scholars Award', amount: 'AUD 10,000', deadline: '2025-09-01', eligibility: 'All undergraduate programs', type: 'undergraduate' }
+    ],
+    postgraduate: [
+      { title: 'Endeavour Research Fellowship', amount: 'AUD 272,500', deadline: '2025-06-30', eligibility: 'Postdoctoral researchers', type: 'postgraduate' },
+      { title: 'Melbourne Research Scholarship', amount: 'Full Tuition', deadline: '2025-10-31', eligibility: 'PhD candidates', type: 'postgraduate' },
+      { title: 'Australia Global Alumni Grant', amount: 'AUD 50,000', deadline: '2025-11-15', eligibility: 'Previous Australia graduates', type: 'postgraduate' }
+    ]
+  }
+};
 
 const ScholarshipsClient: React.FC = () => {
   const [selectedCountry, setSelectedCountry] = useState<Country>('usa');
@@ -93,7 +91,7 @@ const ScholarshipsClient: React.FC = () => {
           <h2 className="text-4xl font-bold text-gray-900 mb-3">
             Global Scholarship Programs
           </h2>
-          <p className="text-gray-600 text-base max-w-3xl mx-auto">
+          <p className="text-purple-600 text-base max-w-3xl mx-auto">
             Curated funding opportunities for undergraduate and postgraduate studies across top destinations
           </p>
         </div>
@@ -110,7 +108,7 @@ const ScholarshipsClient: React.FC = () => {
                   : 'border-purple-200 text-purple-600 hover:bg-purple-50'
                 }`}
             >
-              {country.charAt(0).toUpperCase() + country.slice(1)}
+              {country.toUpperCase()}
             </button>
           ))}
         </div>
@@ -167,7 +165,7 @@ const ScholarshipsClient: React.FC = () => {
 
               <button
                 onClick={() => handleLearnMore(scholarship.title)}
-                className="mt-auto w-full py-2.5 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors"
+                className="mt-auto w-full py-2.5 bg-gradient-to-r from-purple-600 to-rose-500 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors"
               >
                 Learn More
               </button>

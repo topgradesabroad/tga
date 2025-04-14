@@ -106,7 +106,7 @@ const ServicesCarousel: React.FC<ServicesCarouselProps> = ({ services }) => {
                       <div className="p-2 rounded-lg bg-white shadow-sm mr-3">
                         {service.icon}
                       </div>
-                      <h3 className="text-xl font-semibold text-gray-900 flex items-center">
+                      <h3 className="text-xl font-semibold text-purple-900 flex items-center">
                         {service.title}
                         <ArrowUpRight className="w-4 h-4 ml-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </h3>

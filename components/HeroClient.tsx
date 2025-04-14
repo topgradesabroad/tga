@@ -6,25 +6,99 @@ const slides = [
   {
     badge: "Discover Your Future",
     headline: "Make your study-abroad dream a reality in 2025.",
+    highlightWords: {
+      "study-abroad": "purple-600",
+      "reality": "rose-500"
+    },
     buttonText: "Book Free Consultation",
+    buttonLink: "https://calendly.com/apply-topgradesabroad",
+    buttonType: "external",
   },
   {
     badge: "Proven Success",
     headline: "90% of our students get selected for their dream universities.",
+    highlightWords: {
+      "90%": "rose-500",
+      "dream universities": "purple-600"
+    },
     buttonText: "Connect on Whatsapp",
+    buttonLink: "https://wa.me/919660372374",
+    buttonType: "external",
   },
   {
     badge: "Expert Advantage",
     headline: "Succeed with expert guidance and a global network.",
-    buttonText: "Explore Courses",
+    highlightWords: {
+      "expert guidance": "purple-600",
+      "global network": "rose-500"
+    },
+    buttonText: "Ivy League Applications",
+    buttonLink: "/ivy-league-applications",
+    buttonType: "internal",
   },
 ];
+
+// Pre-process the headlines to split them into segments for colored typing
+const processedSlides = slides.map(slide => {
+  const segments = [];
+  let remainingHeadline = slide.headline;
+  
+  // Find all highlight words and their positions
+  const positionMap: { word: string; position: number; colorClass: string; endPosition: number }[] = [];
+  Object.entries(slide.highlightWords).forEach(([word, colorClass]) => {
+    const position = remainingHeadline.indexOf(word);
+    if (position !== -1) {
+      positionMap.push({
+        word,
+        position,
+        colorClass,
+        endPosition: position + word.length
+      });
+    }
+  });
+  
+  // Sort by position
+  positionMap.sort((a, b) => a.position - b.position);
+  
+  // Create segments
+  let lastEnd = 0;
+  positionMap.forEach(item => {
+    // Add text before the highlight word
+    if (item.position > lastEnd) {
+      segments.push({
+        text: remainingHeadline.substring(lastEnd, item.position),
+        color: null
+      });
+    }
+    
+    // Add the highlight word
+    segments.push({
+      text: item.word,
+      color: item.colorClass
+    });
+    
+    lastEnd = item.endPosition;
+  });
+  
+  // Add any remaining text
+  if (lastEnd < remainingHeadline.length) {
+    segments.push({
+      text: remainingHeadline.substring(lastEnd),
+      color: null
+    });
+  }
+  
+  return {
+    ...slide,
+    segments
+  };
+});
 
 export default function HeroClient() {
   const [currentSlide, setCurrentSlide] = useState(0);
   // Phases: slideIn → typewriter → visible → slideOut → pause
   const [phase, setPhase] = useState("slideIn");
-  const [displayText, setDisplayText] = useState("");
+  const [typedLength, setTypedLength] = useState(0);
   const [cursorVisible, setCursorVisible] = useState(true);
   const [cursorHeight, setCursorHeight] = useState("1em");
   const headlineRef = useRef(null);
@@ -37,13 +111,22 @@ export default function HeroClient() {
     }
   }, [phase]);
 
+  // Get full headline text length for current slide
+  const getFullHeadlineLength = () => {
+    return processedSlides[currentSlide].segments.reduce(
+      (total, segment) => total + segment.text.length, 
+      0
+    );
+  };
+
   // Typewriter effect: reveal headline text gradually.
   useEffect(() => {
     if (phase === "typewriter") {
-      const currentHeadline = slides[currentSlide].headline;
-      if (displayText.length < currentHeadline.length) {
+      const fullLength = getFullHeadlineLength();
+      
+      if (typedLength < fullLength) {
         const timer = setTimeout(() => {
-          setDisplayText(currentHeadline.substring(0, displayText.length + 1));
+          setTypedLength(typedLength + 1);
         }, 50);
         return () => clearTimeout(timer);
       } else {
@@ -51,7 +134,7 @@ export default function HeroClient() {
         return () => clearTimeout(timer);
       }
     }
-  }, [displayText, phase, currentSlide]);
+  }, [typedLength, phase, currentSlide]);
 
   // Keep headline visible for a short duration.
   useEffect(() => {
@@ -74,7 +157,7 @@ export default function HeroClient() {
     if (phase === "pause") {
       const timer = setTimeout(() => {
         setCurrentSlide((prev) => (prev + 1) % slides.length);
-        setDisplayText("");
+        setTypedLength(0);
         setPhase("slideIn");
       }, 1000);
       return () => clearTimeout(timer);
@@ -97,37 +180,90 @@ export default function HeroClient() {
       }
       setCursorHeight(lineHeight);
     }
-  }, [displayText, phase]);
+  }, [typedLength, phase]);
+
+  // Function to handle button clicks
+  const handleButtonClick = () => {
+    const currentLink = slides[currentSlide].buttonLink;
+    const currentType = slides[currentSlide].buttonType;
+    
+    if (currentType === "external") {
+      window.open(currentLink, "_blank");
+    } else {
+      window.location.href = currentLink;
+    }
+  };
+
+  // Render headline with colored segments during typing
+  const renderColoredTypedHeadline = () => {
+    const segments = processedSlides[currentSlide].segments;
+    let remainingChars = typedLength;
+    let result = [];
+    
+    for (let i = 0; i < segments.length; i++) {
+      const segment = segments[i];
+      
+      // If we've used all characters, break
+      if (remainingChars <= 0) break;
+      
+      // Calculate how many characters we can display from this segment
+      const charsToDisplay = Math.min(remainingChars, segment.text.length);
+      const displayText = segment.text.substring(0, charsToDisplay);
+      
+      // Add this segment to the result with appropriate styling
+      if (segment.color) {
+        result.push(
+          <span key={i} className={`text-${segment.color}`}>
+            {displayText}
+          </span>
+        );
+      } else {
+        result.push(displayText);
+      }
+      
+      // Update remaining characters
+      remainingChars -= charsToDisplay;
+    }
+    
+    return result;
+  };
+
+  // Button styles for each slide
+  const buttonStyles = [
+    "bg-gradient-to-r from-purple-600 to-rose-500 hover:from-purple-700 hover:to-rose-600",
+    "bg-gradient-to-r from-rose-500 to-purple-600 hover:from-rose-600 hover:to-purple-700",
+    "bg-gradient-to-r from-purple-700 to-rose-400 hover:from-purple-800 hover:to-rose-500"
+  ];
 
   return (
     <div key={`slide-${currentSlide}`} className="animate-slideInFromRight">
       {/* Badge */}
-      <div className="mb-4">
-        <div className="flex items-center">
-          <span className="w-6 h-0.5 bg-indigo-600 inline-block mr-2"></span>
-          <span className="text-indigo-600 text-md font-medium">
+      <div className="mb-6">
+        <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-purple-100 to-rose-100 border border-purple-200 shadow-sm">
+          <span className={`h-2 w-2 rounded-full mr-2 ${currentSlide === 0 ? 'bg-purple-600' : currentSlide === 1 ? 'bg-rose-500' : 'bg-purple-700'}`}></span>
+          <span className={`text-sm font-semibold ${currentSlide === 0 ? 'text-purple-700' : currentSlide === 1 ? 'text-rose-600' : 'text-purple-800'}`}>
             {slides[currentSlide].badge}
           </span>
         </div>
       </div>
 
       {/* Fixed headline area */}
-      <div className="relative h-40 w-full md:h-64 overflow-hidden mb-4 bg-white flex items-start pt-8">
+      <div className="relative h-40 w-full md:h-64 overflow-hidden mb-6 bg-white flex items-start pt-8">
         {(phase === "typewriter" || phase === "visible" || phase === "slideOut") && (
           <h1
             ref={headlineRef}
-            className={`text-3xl md:text-6xl lg:text-7xl font-bold text-black leading-tight ${
+            className={`text-3xl md:text-6xl lg:text-7xl font-bold leading-tight text-gray-900 ${
               phase === "slideOut" ? "animate-slideOutDown" : ""
             }`}
             style={{ margin: 0 }}
           >
-            {displayText}
+            {renderColoredTypedHeadline()}
             <span
               className="ml-1 inline-block"
               style={{
                 width: "6px",
                 height: cursorHeight,
-                backgroundColor: "indigo",
+                backgroundColor: currentSlide === 0 ? "#8b5cf6" : currentSlide === 1 ? "#f43f5e" : "#7e22ce",
                 opacity: cursorVisible ? 1 : 0,
                 verticalAlign: "middle",
               }}
@@ -137,9 +273,15 @@ export default function HeroClient() {
       </div>
 
       {/* CTA Button */}
-      <div className="mt-4">
-        <button className="px-4 py-2 bg-purple-600 hover:bg-indigo-700 text-white font-medium rounded-md shadow-md">
-          {slides[currentSlide].buttonText}
+      <div className="mt-6">
+        <button 
+          onClick={handleButtonClick}
+          className={`px-6 py-3 ${buttonStyles[currentSlide]} text-white font-medium rounded-lg shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl flex items-center space-x-2`}
+        >
+          <span>{slides[currentSlide].buttonText}</span>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
         </button>
       </div>
 
